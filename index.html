@@ -1,0 +1,1161 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chasen-Liao — CS @ GDUFE × AI Agent / RAG Builder</title>
+  <meta name="description" content="Chasen-Liao — 广东财经大学计算机科学在读，专注 AI Agent / RAG 与前端工程化。用真实项目探索 LLM 应用边界。" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,500;1,600&family=Noto+Serif+SC:wght@500;600;700&family=Inter:wght@300;400;500;600&family=Noto+Sans+SC:wght@300;400;500&display=swap" rel="stylesheet" />
+
+  <!-- ═══════════ DESIGN TOKENS（提取自 sac-ai.com）═══════════ -->
+  <style>
+    :root{
+      --paper:#F4EFE6;
+      --ink:#1A1714;
+      --accent:#F0652E;
+      --line:#C9C0B2;
+      --muted:#7d756a;
+      --ink-soft:#3a342d;
+
+      --serif:'Playfair Display','Noto Serif SC',Georgia,serif;
+      --serif-cjk:'Noto Serif SC','Playfair Display',serif;
+      --sans:'Inter','Noto Sans SC',system-ui,sans-serif;
+      --sans-cjk:'Noto Sans SC','Inter',sans-serif;
+      --mono:ui-monospace,'SF Mono','Menlo','Roboto Mono',monospace;
+
+      --nav-h:78px;
+      --pad-x:clamp(32px,5vw,72px);
+      --rail-x:48px;
+      --ease:cubic-bezier(.22,.61,.36,1);
+    }
+
+    /* ───── 纸张底 + 颗粒纸纹 ───── */
+    html,body{background:var(--paper);overflow-x:hidden;}
+    *{margin:0;padding:0;box-sizing:border-box;}
+    img{display:block;max-width:100%;}
+    a{color:inherit;text-decoration:none;}
+    body{
+      position:relative;
+      color:var(--ink);
+      font-family:var(--sans);
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      background-image:radial-gradient(rgba(26,23,20,.02) 1px,transparent 1px);
+      background-size:3px 3px;
+    }
+    body::before{
+      content:"";
+      position:fixed;inset:0;z-index:1;pointer-events:none;
+      opacity:.045;mix-blend-mode:multiply;
+      background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    }
+    main{position:relative;z-index:2;}
+  </style>
+
+  <!-- ═══════════ BASE（导航 / 左脊柱 / 四角准星 / 按钮）═══════════ -->
+  <style>
+    /* ───── 顶部导航 ───── */
+    .nav{
+      position:fixed;top:0;left:0;right:0;z-index:40;
+      height:var(--nav-h);
+      display:flex;align-items:center;justify-content:space-between;
+      padding:0 var(--pad-x);
+      border-bottom:1px solid var(--line);
+      background:rgba(244,239,230,.82);
+      backdrop-filter:blur(8px);
+      -webkit-backdrop-filter:blur(8px);
+    }
+    .nav__brand{
+      font-family:var(--serif);
+      font-size:24px;font-weight:600;letter-spacing:-.02em;
+    }
+    .nav__brand .accent-dot{
+      display:inline-block;width:7px;height:7px;border-radius:50%;
+      background:var(--accent);margin-left:3px;vertical-align:2px;
+    }
+    .nav__links{
+      display:flex;align-items:center;gap:14px;
+      font-size:12px;font-weight:600;letter-spacing:.08em;
+    }
+    .nav__links a{color:var(--ink);transition:color .25s;cursor:pointer;padding:8px 4px;margin:-8px -4px;}
+    .nav__links a:hover{color:var(--accent);}
+    /* 下划线总是渲染但 scaleX(0)，active/hover 时 200ms 展开到 1。
+       transform 而非 width，避免触发 layout。 */
+    .nav__links a::after{
+      content:"";position:absolute;left:4px;right:4px;bottom:0;
+      height:1px;background:var(--accent);
+      transform:scaleX(0);transform-origin:left center;
+      transition:transform .2s var(--ease);
+    }
+    .nav__links a{position:relative;}
+    .nav__links a:hover::after{transform:scaleX(1);}
+    .nav__links .sep{color:var(--line);font-weight:300;}
+    .nav__stat{
+      display:inline-flex;align-items:center;gap:7px;
+      margin-left:16px;color:var(--ink);letter-spacing:.02em;
+    }
+    .nav__stat i{width:5px;height:5px;border-radius:50%;background:var(--accent);
+      animation:srow-pulse 2s infinite;}
+    @keyframes srow-pulse{
+      0%{box-shadow:0 0 0 0 rgba(240,101,46,.45);}
+      70%{box-shadow:0 0 0 6px rgba(240,101,46,0);}
+      100%{box-shadow:0 0 0 0 rgba(240,101,46,0);}
+    }
+    .nav__github{
+      display:inline-flex;align-items:center;justify-content:center;
+      width:18px;height:18px;margin-left:4px;
+      color:var(--ink);transition:color .25s var(--ease),transform .25s var(--ease);
+    }
+    .nav__github svg{width:15px;height:15px;display:block;}
+    .nav__github:hover{color:var(--accent);transform:translateY(-1px);}
+    .nav__links a.is-active{color:var(--ink);}
+    .nav__links a.is-active::after{transform:scaleX(1);}
+
+    /* ───── 左侧韵律线(脊柱)+ 四角准星 ───── */
+    .rail{position:fixed;top:0;bottom:0;left:var(--rail-x);z-index:3;pointer-events:none;}
+    .rail i{position:absolute;top:calc(var(--nav-h) + 40px);bottom:48px;width:1px;background:var(--line);opacity:.7;}
+    .rail i:nth-child(1){left:0;}
+    .rail i:nth-child(2){left:7px;}
+    .rail i:nth-child(3){left:14px;}
+
+    .cross{position:fixed;z-index:3;width:18px;height:18px;pointer-events:none;opacity:.5;}
+    .cross::before,.cross::after{content:"";position:absolute;background:var(--line);}
+    .cross::before{left:8px;top:0;width:1px;height:18px;}
+    .cross::after{top:8px;left:0;height:1px;width:18px;}
+    .cross--tr{top:calc(var(--nav-h) + 22px);right:38px;}
+    .cross--bl{bottom:34px;left:34px;}
+    .cross--br{bottom:34px;right:38px;}
+
+    /* ───── CTA 按钮 ───── */
+    .btn{
+      display:inline-flex;align-items:center;gap:12px;
+      font-family:var(--sans-cjk);font-size:16px;font-weight:400;
+      transition:all .3s var(--ease);cursor:pointer;border:none;
+    }
+    .btn .arr{transition:transform .3s var(--ease);}
+    .btn:hover .arr{transform:translateX(5px);}
+    .btn--ghost{
+      padding:18px 42px;border:1px solid var(--ink);
+      background:transparent;color:var(--ink);
+    }
+    .btn--ghost:hover,.btn--ghost:active{
+      background:var(--accent);border-color:var(--accent);color:var(--paper);
+    }
+    .btn--ghost:hover .arr,.btn--ghost:active .arr{color:var(--paper);}
+
+    /* ───── 键盘焦点环（WCAG 2.4.7 / 1.4.11）───── */
+    /* 鼠标点击不显示，仅键盘 Tab 时出现。2px 实线 + 2px 偏移，
+       contrast ≥ 3:1 against paper。 */
+    a:focus-visible,
+    button:focus-visible,
+    [tabindex]:not([tabindex="-1"]):focus-visible{
+      outline:2px solid var(--accent);
+      outline-offset:3px;
+      border-radius:1px;
+    }
+    /* 导航链接用下划线代替外框，避免被 nav 底边裁切 */
+    .nav__links a:focus-visible{
+      outline:none;
+      text-decoration:underline;
+      text-decoration-thickness:2px;
+      text-underline-offset:6px;
+      text-decoration-color:var(--accent);
+    }
+    /* 作品行 focus 时用背景色 + 左缩进，呼应 hover */
+    .wrow:focus-visible{
+      outline:none;
+      background:rgba(240,101,46,.08);
+      padding-left:10px;
+    }
+    .skill-row:focus-visible{
+      outline:none;
+      background:rgba(240,101,46,.08);
+    }
+
+    /* ───── 入场动画兜底（无 JS 时由 noscript 覆盖）───── */
+    /* CSS 驱动：JS 只加 .is-revealed 类，所有 timing/easing 在这里。
+       品牌 ease var(--ease) = cubic-bezier(.22,.61,.36,1)，~600ms。 */
+    [data-reveal]{
+      opacity:0;
+      transform:translateY(18px);
+      transition:opacity .6s var(--ease), transform .6s var(--ease);
+      will-change:opacity, transform;
+    }
+    [data-reveal].is-revealed{opacity:1;transform:none;}
+
+    /* 注：作品/技能行不加 stagger——它们自身有 hover transition，
+       transition-delay 会污染 hover 响应。容器整体 reveal 已足够。 */
+
+    @media (prefers-reduced-motion:reduce){
+      *{animation:none !important;transition:none !important;}
+      [data-reveal]{opacity:1;transform:none;}
+    }
+  </style>
+
+  <!-- ═══════════ SECTIONS ═══════════ -->
+  <style>
+    /* ═══════════ HERO ═══════════ */
+    .hero{
+      min-height:100vh;
+      padding:0 var(--pad-x) 0 calc(var(--rail-x) + 56px);
+      display:grid;
+      grid-template-columns:minmax(0,38%) minmax(0,62%);
+      align-items:stretch;
+      gap:0;
+      overflow:hidden;
+    }
+    .hero__left{
+      display:flex;flex-direction:column;justify-content:flex-start;
+      padding:calc(var(--nav-h) + 7vh) 0 6vh;
+      max-width:760px;
+      position:relative;z-index:4;
+    }
+    .hero__lower{margin-top:clamp(34px,4.8vh,66px);margin-left:clamp(8px,1.2vw,22px);}
+    .hero__wordmark{
+      font-family:var(--serif);
+      font-weight:500;
+      font-size:clamp(120px,16vw,280px);
+      line-height:.8;letter-spacing:-.02em;
+      white-space:nowrap;
+    }
+    .hero__kicker{
+      display:flex;align-items:center;gap:11px;
+      font-size:clamp(14px,1vw,18px);letter-spacing:.05em;color:var(--accent);
+      margin-bottom:28px;font-weight:500;
+    }
+    .hero__kicker .dot{width:10px;height:10px;border-radius:50%;background:var(--accent);flex:none;
+      animation:srow-pulse 2s infinite;}
+    .hero__slogan{
+      font-family:var(--sans-cjk);font-weight:300;
+      font-size:clamp(20px,1.7vw,30px);line-height:1.6;
+      color:var(--ink);margin-bottom:32px;
+    }
+    .hero__slogan em{font-style:normal;color:var(--accent);font-weight:400;}
+    .hero__cta{
+      display:flex;align-items:stretch;gap:24px;
+      width:min(100%,390px);flex-wrap:nowrap;
+    }
+    .hero__cta .btn{flex:1 1 0;height:58px;padding:0 22px;justify-content:center;}
+
+    /* 右栏：头像占位区（蓝图风格） */
+    .hero__right{display:flex;justify-content:flex-start;align-items:flex-start;}
+    .portrait{
+      position:relative;flex:none;
+      width:min(60vw,1100px);
+      aspect-ratio:945/638;
+      margin-top:calc(var(--nav-h) - 72px);
+      margin-left:clamp(6px,1vw,22px);
+    }
+    .portrait__media{
+      position:absolute;inset:0;overflow:hidden;
+      display:flex;flex-direction:column;justify-content:center;align-items:center;
+      background:
+        linear-gradient(rgba(201,192,178,.14) 1px,transparent 1px) 0 0/100% 31px,
+        linear-gradient(90deg,rgba(201,192,178,.14) 1px,transparent 1px) 0 0/31px 100%,
+        rgba(26,23,20,.03);
+      border:1px solid var(--line);
+    }
+    .portrait__media::after{
+      content:"";position:absolute;inset:18px;border:1px solid rgba(201,192,178,.45);
+      pointer-events:none;
+    }
+    .portrait__monogram{
+      font-family:var(--serif);font-weight:500;
+      font-size:clamp(120px,14vw,220px);color:var(--ink);opacity:.10;
+      line-height:1;letter-spacing:-.04em;
+      position:absolute;top:50%;left:50%;transform:translate(-50%,-54%);
+      pointer-events:none;user-select:none;
+    }
+    .portrait__center{
+      position:relative;z-index:2;text-align:center;
+      display:flex;flex-direction:column;align-items:center;gap:10px;
+    }
+    .portrait__frame-label{
+      font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.22em;
+      color:var(--ink-soft);text-transform:uppercase;
+    }
+    .portrait__placeholder-hint{
+      font-family:var(--sans-cjk);font-size:12px;font-weight:300;
+      color:var(--muted);letter-spacing:.02em;
+    }
+    .portrait__label{
+      position:absolute;bottom:24px;left:24px;z-index:2;
+      font-family:var(--mono);font-size:9px;letter-spacing:.12em;
+      color:var(--muted);text-transform:uppercase;line-height:1.6;
+    }
+    .portrait__label b{color:var(--ink-soft);font-weight:600;}
+    .portrait__corner{
+      position:absolute;top:24px;right:24px;z-index:2;
+      font-family:var(--mono);font-size:9px;letter-spacing:.16em;
+      color:var(--muted);text-transform:uppercase;
+    }
+    .portrait__status{
+      position:absolute;top:24px;left:24px;z-index:2;
+      display:inline-flex;align-items:center;gap:7px;
+      font-family:var(--mono);font-size:9px;font-weight:600;letter-spacing:.14em;
+      color:var(--accent);text-transform:uppercase;
+    }
+    .portrait__status .pulse-dot{
+      width:6px;height:6px;border-radius:50%;background:var(--accent);position:relative;
+    }
+    .portrait__status .pulse-dot::after{
+      content:"";position:absolute;inset:0;border-radius:50%;background:var(--accent);
+      animation:pulse 2s var(--ease) infinite;
+    }
+    /* L 取景角 */
+    .portrait__cross{position:absolute;z-index:5;width:58px;height:58px;pointer-events:none;--corner-overhang:6px;}
+    .portrait__cross::before,.portrait__cross::after{
+      content:"";position:absolute;background:rgba(201,192,178,.95);opacity:1;transform:none;
+    }
+    .portrait__cross--tl{top:94px;left:58px;}
+    .portrait__cross--tl::before{top:0;left:calc(var(--corner-overhang) * -1);width:calc(100% + var(--corner-overhang));height:1px;}
+    .portrait__cross--tl::after{top:calc(var(--corner-overhang) * -1);left:0;width:1px;height:calc(100% + var(--corner-overhang));}
+    .portrait__cross--br{right:150px;bottom:8px;}
+    .portrait__cross--br::before{top:auto;left:auto;right:calc(var(--corner-overhang) * -1);bottom:0;width:calc(100% + var(--corner-overhang));height:1px;}
+    .portrait__cross--br::after{top:auto;left:auto;right:0;bottom:calc(var(--corner-overhang) * -1);width:1px;height:calc(100% + var(--corner-overhang));}
+
+    /* ═══════════ ABOUT ═══════════ */
+    .about{
+      position:relative;overflow:hidden;min-height:100vh;
+      padding:calc(var(--nav-h) + 5vh) calc(var(--pad-x) + 40px) 7vh calc(var(--rail-x) + 56px);
+      display:grid;
+      grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);
+      gap:clamp(48px,5.7vw,96px);
+      align-content:start;
+      border-top:1px solid var(--line);
+    }
+    .about__left,.about__right{position:relative;z-index:1;min-width:0;}
+    .about__right{padding-top:clamp(18px,1.5vw,24px);}
+    .about__title{
+      font-family:var(--serif);font-weight:500;
+      font-size:clamp(60px,6vw,110px);line-height:.92;
+      margin-bottom:28px;
+    }
+    .about__bio p{
+      font-family:var(--sans-cjk);font-weight:300;
+      font-size:clamp(16px,1.35vw,22px);line-height:1.65;
+      color:var(--ink-soft);max-width:31em;margin-bottom:12px;
+    }
+
+    /* ── 工程蓝图档案卡 ── */
+    .blueprint{
+      position:relative;width:100%;
+      height:clamp(330px,23vw,342px);
+      margin-top:clamp(44px,4vw,58px);
+      border:1px solid var(--line);
+      background:
+        linear-gradient(rgba(201,192,178,.14) 1px,transparent 1px) 0 0/100% 31px,
+        linear-gradient(90deg,rgba(201,192,178,.14) 1px,transparent 1px) 0 0/31px 100%;
+    }
+    .blueprint__center{
+      position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+      width:46%;aspect-ratio:1;
+      border:1px solid rgba(240,101,46,.16);border-radius:50%;
+      display:flex;align-items:center;justify-content:center;
+      font-family:var(--serif);font-weight:600;
+      font-size:clamp(28px,3vw,48px);color:var(--ink-soft);
+    }
+    .blueprint__ring2{
+      position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+      width:62%;aspect-ratio:1;
+      border:1px solid rgba(201,192,178,.4);border-radius:50%;
+    }
+    /* 四角准星 */
+    .bp__target{position:absolute;width:17px;height:17px;border-radius:50%;border:1px solid var(--accent);}
+    .bp__target::before,.bp__target::after{content:"";position:absolute;background:var(--accent);}
+    .bp__target::before{top:50%;left:-5px;right:-5px;height:1px;transform:translateY(-50%);}
+    .bp__target::after{left:50%;top:-5px;bottom:-5px;width:1px;transform:translateX(-50%);}
+    .bp__target--tl{top:14px;left:14px;}
+    .bp__target--tr{top:14px;right:14px;}
+    .bp__target--bl{bottom:14px;left:14px;}
+    .bp__target--br{bottom:14px;right:14px;}
+    /* 标注 */
+    .bp__anno{position:absolute;}
+    .bp__mono{
+      font-family:var(--mono);font-size:8px;line-height:1.62;
+      letter-spacing:.04em;color:var(--muted);
+      white-space:nowrap;text-transform:uppercase;
+    }
+    .bp__mono--key{color:var(--ink-soft);font-weight:600;}
+    .bp__lead{
+      display:flex;align-items:center;gap:7px;
+      font-family:var(--mono);font-size:9px;font-weight:600;
+      letter-spacing:.06em;color:var(--ink);text-transform:uppercase;
+    }
+    .bp__sq{width:5px;height:5px;background:var(--accent);display:inline-block;}
+    .bp__hr{display:block;width:90px;height:1px;background:var(--line);margin:7px 0;}
+    .bp__anno--tl{top:24px;left:30px;}
+    .bp__anno--spec{top:32%;left:30px;}
+    .bp__anno--ver{bottom:50px;left:30px;}
+    .bp__anno--tr{top:24px;right:30px;text-align:right;}
+    .bp__anno--cat{top:32%;right:30px;text-align:right;}
+    .bp__anno--focus{top:60%;right:30px;text-align:right;}
+    .bp__anno--est{bottom:50px;right:30px;text-align:right;}
+    .bp__coords{
+      position:absolute;left:50%;bottom:14px;transform:translateX(-50%);
+      font-family:var(--mono);font-size:8px;line-height:1.55;letter-spacing:.12em;
+      color:var(--ink-soft);white-space:nowrap;
+    }
+
+    /* ── 技能信号台（复用 platform signal 布局）── */
+    .signal{max-width:650px;margin-left:clamp(16px,2vw,34px);}
+    .signal__head{
+      display:flex;align-items:baseline;justify-content:space-between;gap:16px;
+      padding-bottom:16px;border-bottom:1px solid var(--ink);margin-bottom:0;
+    }
+    .signal__title{
+      font-family:var(--serif-cjk);font-weight:600;
+      font-size:clamp(22px,2vw,30px);line-height:1;
+    }
+    .signal__legend{
+      font-family:var(--mono);font-size:10px;letter-spacing:.14em;color:var(--muted);
+    }
+    .signal__legend b{color:var(--accent);font-weight:600;}
+    .signal__list{list-style:none;margin:0;padding:0;}
+    .skill-row{
+      display:grid;
+      grid-template-columns:minmax(90px,160px) minmax(40px,1fr) clamp(54px,5.5vw,74px) clamp(76px,7vw,112px);
+      align-items:center;column-gap:16px;
+      min-height:68px;padding:10px 0;
+      border-bottom:1px solid var(--line);
+      transition:background .25s;
+    }
+    .skill-row:hover{background:rgba(240,101,46,.06);}
+    .skill__name{
+      font-family:var(--sans-cjk);font-size:clamp(14px,1.06vw,17px);
+      color:var(--ink);font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+    }
+    .skill__name em{font-style:normal;font-family:var(--mono);font-size:11px;color:var(--muted);margin-left:6px;font-weight:400;}
+    .skill__bars{
+      display:flex;align-items:flex-end;gap:5px;height:30px;
+    }
+    .skill__bars i{width:8px;border-radius:2px;background:var(--accent);}
+    .skill__bars--fade i:nth-child(n+6){background:var(--line);}
+    .skill__level{
+      font-family:var(--mono);font-size:clamp(12px,.9vw,14px);
+      color:var(--ink);font-variant-numeric:tabular-nums;
+    }
+    .skill__years{
+      justify-self:end;font-family:var(--mono);font-size:11px;
+      letter-spacing:.08em;color:var(--muted);
+    }
+
+    /* ═══════════ WORK ═══════════ */
+    .work{
+      min-height:100vh;
+      padding:calc(var(--nav-h) + 5vh) calc(var(--pad-x) + 40px) 8vh calc(var(--rail-x) + 56px);
+      border-top:1px solid var(--line);
+    }
+    .work__head{
+      display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:16px;
+      margin-bottom:18px;
+    }
+    .work__title{
+      font-family:var(--serif);font-weight:500;
+      font-size:clamp(48px,6vw,96px);line-height:1;
+    }
+    .work__meta{
+      font-family:var(--mono);font-size:11px;letter-spacing:.1em;
+      color:var(--muted);text-transform:uppercase;text-align:right;line-height:1.7;
+    }
+    .work__meta b{color:var(--ink-soft);font-weight:600;}
+    .work__cats{
+      display:flex;align-items:center;gap:20px;
+      font-size:14px;letter-spacing:.04em;color:var(--ink);
+      padding-bottom:26px;border-bottom:1px solid var(--line);margin-bottom:8px;
+    }
+    .cat-sep{width:1px;height:14px;background:var(--line);}
+
+    /* 档案行 */
+    .wrow{
+      display:grid;
+      grid-template-columns:58px auto minmax(40px,1fr) auto 150px 28px;
+      align-items:center;gap:28px;
+      padding:24px 4px;border-bottom:1px solid var(--line);
+      transition:padding-left .3s var(--ease);cursor:pointer;
+    }
+    .wrow__rule{height:1px;background:var(--line);align-self:center;}
+    .wrow:hover{padding-left:10px;}
+    .wrow__idx{font-family:var(--serif);font-size:30px;color:#9a9082;}
+    .wrow__body{min-width:0;}
+    .wrow__meta-row{display:flex;align-items:center;gap:14px;margin-bottom:8px;flex-wrap:wrap;}
+    .wrow__tag{
+      font-size:11px;letter-spacing:.06em;color:var(--paper);
+      background:var(--ink);padding:3px 10px;border-radius:2px;
+      font-weight:600;text-transform:uppercase;
+    }
+    .wrow__tag--accent{background:var(--accent);}
+    .wrow__date{font-size:12px;color:var(--line);font-variant-numeric:tabular-nums;}
+    .wrow__date::before{content:"·  ";color:var(--line);}
+    .wrow__title{
+      font-family:var(--serif-cjk);font-weight:600;
+      font-size:clamp(20px,1.7vw,24px);line-height:1.25;transition:color .25s;
+    }
+    .wrow__dek{
+      font-family:var(--sans-cjk);font-weight:300;
+      font-size:13.5px;color:var(--ink-soft);margin-top:7px;max-width:42em;
+      transition:color .25s;line-height:1.55;
+    }
+    .wrow:hover .wrow__idx,
+    .wrow:hover .wrow__title,
+    .wrow:hover .wrow__dek{color:var(--accent);}
+    .wrow__idx,.wrow__tag{transition:color .25s,background .25s;}
+    .wrow__stack{
+      justify-self:end;
+      display:flex;flex-wrap:wrap;gap:6px;justify-content:flex-end;max-width:150px;
+    }
+    .wrow__chip{
+      font-family:var(--mono);font-size:10px;letter-spacing:.03em;
+      color:var(--ink-soft);border:1px solid var(--line);
+      padding:2px 7px;border-radius:2px;white-space:nowrap;
+    }
+    .wrow__thumb{
+      width:150px;height:84px;overflow:hidden;border:1px solid var(--line);background:#2a2622;
+    }
+    .wrow__thumb-ph{
+      width:100%;height:100%;
+      display:flex;align-items:center;justify-content:center;
+      font-family:var(--mono);font-size:9px;color:rgba(244,239,230,.4);
+      letter-spacing:.1em;background:linear-gradient(135deg,#2a2622,#3a342d);
+    }
+    .wrow__arr{justify-self:end;color:var(--ink);transition:transform .3s var(--ease),color .3s;}
+    .wrow:hover .wrow__arr{transform:translateX(5px);color:var(--accent);}
+
+    .work__all{
+      display:inline-flex;align-items:center;gap:10px;
+      margin-top:34px;font-size:14px;border-bottom:1px solid var(--ink);
+      padding-bottom:3px;transition:color .25s,border-color .25s;cursor:pointer;
+    }
+    .work__all:hover{color:var(--accent);border-color:var(--accent);}
+    .work__all .arr{transition:transform .25s var(--ease);}
+    .work__all:hover .arr{transform:translateX(5px);}
+
+    /* ═══════════ CONTACT ═══════════ */
+    .contact{
+      min-height:100vh;
+      padding:calc(var(--nav-h) + 4vh) var(--pad-x) 0;
+      display:flex;flex-direction:column;
+      border-top:1px solid var(--line);
+    }
+    .contact__center{text-align:center;margin:auto;padding:4vh 0;}
+    .contact__kicker{
+      display:flex;align-items:center;justify-content:center;gap:14px;
+      font-size:12px;letter-spacing:.22em;color:var(--muted);margin-bottom:26px;
+    }
+    .contact__kicker .ln{width:40px;height:1px;background:var(--line);}
+    .contact__title{
+      position:relative;display:inline-block;
+      font-family:var(--serif);font-weight:500;
+      font-size:clamp(60px,9vw,140px);line-height:1;letter-spacing:-.01em;
+    }
+    .contact__underline{
+      position:absolute;left:2%;right:2%;bottom:-2px;width:96%;height:.16em;
+      background:var(--accent);opacity:.7;
+    }
+    .contact__sub{
+      font-family:var(--sans-cjk);font-size:clamp(17px,1.6vw,21px);
+      color:var(--ink-soft);margin-top:30px;
+    }
+    .contact__status{
+      display:inline-flex;align-items:center;gap:9px;
+      font-size:13px;color:var(--ink-soft);margin-top:24px;
+    }
+    .contact__status .pulse{
+      width:8px;height:8px;border-radius:50%;background:var(--accent);position:relative;
+    }
+    .contact__status .pulse::after{
+      content:"";position:absolute;inset:0;border-radius:50%;background:var(--accent);
+      animation:pulse 2s var(--ease) infinite;
+    }
+    @keyframes pulse{0%{transform:scale(1);opacity:.6}70%{transform:scale(3);opacity:0}100%{opacity:0}}
+
+    /* 关键词 marquee */
+    .contact__marquee{
+      overflow:hidden;border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+      padding:14px 0;
+      -webkit-mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent);
+      mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent);
+    }
+    .marquee__track{display:flex;width:max-content;animation:marquee 36s linear infinite;}
+    .marquee__set{
+      font-family:var(--serif-cjk);font-size:18px;color:var(--muted);
+      letter-spacing:.06em;white-space:nowrap;flex:none;
+    }
+    .marquee__set span{margin:0 24px;}
+    .marquee__set b{color:var(--ink-soft);font-weight:600;}
+    @keyframes marquee{to{transform:translateX(-50%)}}
+
+    /* 底部联系栏 */
+    .contact__bar{
+      display:grid;grid-template-columns:1fr 1fr 1fr 1fr;
+      border-top:1px solid var(--line);
+    }
+    .cbar__item{
+      display:flex;align-items:center;gap:14px;
+      padding:34px;min-height:160px;transition:background .25s;
+    }
+    .cbar__item .cbar__val{flex:1;}
+    .cbar__item + .cbar__item{border-left:1px solid var(--line);}
+    a.cbar__item:hover{background:rgba(26,23,20,.025);}
+    .cbar__lbl{font-size:11px;letter-spacing:.16em;color:var(--muted);text-transform:uppercase;}
+    .cbar__val{
+      font-size:18px;color:var(--ink);display:flex;align-items:center;
+      gap:8px;flex-wrap:wrap;font-family:var(--sans);
+    }
+    .cbar__val em{font-style:normal;font-size:13px;color:var(--muted);}
+    .cbar__val--mail{
+      flex:none !important;border-bottom:1px solid var(--ink);padding-bottom:3px;
+      transition:color .25s,border-color .25s;
+    }
+    a.cbar__item:hover .cbar__val--mail{color:var(--accent);border-color:var(--accent);}
+    .cbar__arr{color:var(--ink);transition:transform .25s var(--ease),color .25s;margin-left:auto;}
+    a.cbar__item:hover .cbar__arr{transform:translateX(5px);color:var(--accent);}
+
+    .cbar__logo{width:28px;height:28px;flex:none;}
+    .cbar__logo svg{width:100%;height:100%;}
+
+    /* 微信 QR 占位 */
+    .cbar__item--wechat{flex-direction:column;align-items:flex-start;gap:8px;}
+    .qr{
+      position:relative;width:88px;height:88px;margin-top:4px;
+      border:1px solid var(--line);
+      display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;
+      background-image:radial-gradient(var(--line) .8px,transparent .8px);background-size:7px 7px;
+      color:var(--muted);
+    }
+    .qr__icon{width:24px;height:24px;}
+    .qr__txt{font-size:10px;letter-spacing:.08em;}
+
+    /* 页脚 */
+    .contact__foot{
+      display:flex;justify-content:space-between;align-items:center;
+      padding:22px 2px 26px;border-top:1px solid var(--line);
+      font-size:12.5px;color:var(--muted);letter-spacing:.04em;
+    }
+    .to-top{display:inline-flex;gap:7px;transition:color .25s;cursor:pointer;}
+    .to-top:hover{color:var(--ink);}
+    .to-top .arr{transition:transform .25s var(--ease);}
+    .to-top:hover .arr{transform:translateY(-3px);}
+
+    /* ═══════════ 响应式 ═══════════ */
+    @media (max-width:860px){
+      :root{--pad-x:20px;--rail-x:20px;}
+      .rail,.cross{display:none;}
+      .nav{height:72px;padding:0 var(--pad-x);}
+      .nav__brand{font-size:20px;}
+      .nav__links{gap:10px;font-size:10px;}
+      .nav__links .sep,.nav__stat{display:none;}
+
+      .hero{
+        grid-template-columns:1fr;
+        padding:calc(var(--nav-h) + 3vh) var(--pad-x) 5vh calc(var(--rail-x) + 12px);
+        gap:4vh;
+      }
+      .hero__left{padding:0 0 4vh;max-width:none;}
+      .hero__wordmark{font-size:clamp(80px,22vw,120px);}
+      .hero__lower{margin-left:0;margin-top:24px;}
+      .hero__right{order:-1;}
+      .portrait{width:min(76vw,420px);margin-left:0;margin-top:0;}
+
+      .about{
+        grid-template-columns:1fr;
+        padding:calc(var(--nav-h) + 4vh) var(--pad-x) 8vh calc(var(--rail-x) + 12px);
+        gap:40px;
+      }
+      .about__right{padding-top:0;}
+      .blueprint{height:auto;aspect-ratio:1.34;}
+      .signal{max-width:none;margin-left:0;}
+      .skill-row{
+        grid-template-columns:minmax(80px,1fr) auto;
+        gap:10px;
+      }
+      .skill__bars,.skill__years{display:none;}
+
+      .work{padding:calc(var(--nav-h) + 4vh) var(--pad-x) 8vh calc(var(--rail-x) + 12px);}
+      .work__cats{gap:10px;flex-wrap:wrap;}
+      .wrow{
+        grid-template-columns:42px minmax(0,1fr) 24px;
+        gap:12px;padding:20px 0;
+      }
+      .wrow__rule,.wrow__stack,.wrow__thumb{display:none;}
+      .wrow__title{font-size:19px;}
+
+      .contact{padding:calc(var(--nav-h) + 4vh) var(--pad-x) 0;}
+      .contact__bar{grid-template-columns:1fr;}
+      .cbar__item{min-height:auto;padding:22px 0;}
+      .cbar__item + .cbar__item{border-left:0;border-top:1px solid var(--line);}
+    }
+
+    @media (max-width:600px){
+      .hero{
+        min-height:100svh;
+        padding:calc(var(--nav-h) + 22px) var(--pad-x) 48px;
+        gap:30px;
+      }
+      .hero__wordmark{font-size:clamp(72px,24vw,110px);}
+      .hero__kicker{font-size:13px;letter-spacing:.04em;margin-bottom:18px;}
+      .hero__slogan{font-size:18px;line-height:1.55;margin-bottom:22px;}
+      .hero__cta{width:100%;max-width:320px;gap:12px;}
+      .hero__cta .btn{height:54px;padding:0 12px;font-size:14px;}
+      .hero__right{justify-content:center;}
+      .portrait{width:min(100%,300px);overflow:hidden;}
+
+      .about{padding:calc(var(--nav-h) + 36px) var(--pad-x) 72px;gap:36px;}
+      .about__title{font-size:clamp(48px,16vw,64px);margin-bottom:20px;}
+      .about__bio p{font-size:15px;line-height:1.7;}
+      .blueprint{max-width:100%;aspect-ratio:1.16;margin-top:30px;overflow:hidden;}
+      .bp__anno--tl,.bp__anno--spec,.bp__anno--ver{left:18px;}
+      .bp__anno--tr,.bp__anno--cat,.bp__anno--focus,.bp__anno--est{right:18px;}
+
+      .contact{padding:calc(var(--nav-h) + 34px) var(--pad-x) 0;}
+      .contact__center{padding:36px 0;}
+      .contact__kicker{gap:8px;font-size:10px;}
+      .contact__kicker .ln{width:24px;}
+      .contact__title{font-size:clamp(44px,14vw,60px);}
+      .contact__sub{font-size:15px;}
+      .cbar__item{gap:10px;padding:18px 0;}
+      .cbar__val{font-size:15px;overflow-wrap:anywhere;}
+      .contact__foot{gap:18px;font-size:11px;}
+    }
+  </style>
+
+  <noscript><style>[data-reveal]{opacity:1 !important;transform:none !important;}</style></noscript>
+</head>
+<body>
+
+  <!-- 左脊柱 + 四角准星 -->
+  <div class="rail"><i></i><i></i><i></i></div>
+  <div class="cross cross--tr"></div>
+  <div class="cross cross--bl"></div>
+  <div class="cross cross--br"></div>
+
+  <!-- 顶部导航 -->
+  <nav class="nav">
+    <div class="nav__brand">Chasen<span class="accent-dot"></span></div>
+    <div class="nav__links">
+      <a href="#hero" data-nav="hero">关于</a>
+      <span class="sep">/</span>
+      <a href="#about" data-nav="about">简历</a>
+      <span class="sep">/</span>
+      <a href="#work" data-nav="work">作品</a>
+      <span class="sep">/</span>
+      <a href="#contact" data-nav="contact">联系</a>
+      <span class="nav__stat"><i></i>开放实习</span>
+    </div>
+  </nav>
+
+  <main>
+
+    <!-- ═══════════ 01 HERO ═══════════ -->
+    <section class="hero" id="hero">
+      <div class="hero__left">
+        <div data-reveal>
+          <div class="hero__kicker"><span class="dot"></span>CS UNDERGRAD × AI / FRONT-END BUILDER</div>
+          <h1 class="hero__wordmark">Chasen</h1>
+        </div>
+        <div class="hero__lower" data-reveal>
+          <p class="hero__slogan">
+            广东财经大学计算机科学在读，专注<em>AI Agent / RAG</em> 与前端工程化。<br>
+            用真实项目探索 LLM 应用边界，从 Agentic RAG 到桌面客户端。
+          </p>
+          <div class="hero__cta">
+            <a class="btn btn--ghost" href="#work" data-nav="work">查看作品 <span class="arr">→</span></a>
+            <a class="btn btn--ghost" href="#contact" data-nav="contact">联系我 <span class="arr">→</span></a>
+          </div>
+        </div>
+      </div>
+      <div class="hero__right" data-reveal>
+        <div class="portrait">
+          <div class="portrait__media">
+            <div class="portrait__monogram">C.</div>
+            <div class="portrait__center">
+              <div class="portrait__frame-label">PORTRAIT</div>
+              <div class="portrait__placeholder-hint">照片占位 · 替换为你的正装照</div>
+            </div>
+            <div class="portrait__label">
+              <b>SUBJECT // CHASEN-LIAO</b><br>
+              N 23°08′ E 113°15′<br>
+              GDUFE · VER. 2026.06
+            </div>
+            <div class="portrait__corner">FRAME / 01</div>
+            <div class="portrait__status"><span class="pulse-dot"></span>AVAILABLE</div>
+          </div>
+          <div class="portrait__cross portrait__cross--tl"></div>
+          <div class="portrait__cross portrait__cross--br"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════ 02 ABOUT ═══════════ -->
+    <section class="about" id="about">
+      <div class="about__left">
+        <h2 class="about__title" data-reveal>About<br>me.</h2>
+        <div class="about__bio" data-reveal>
+          <p>我是 Chasen，广东财经大学计算机科学在读。过去一年我把精力集中在 AI 应用的工程化落地——从 Agentic RAG 的记忆架构到编程智能体的桌面客户端，每个项目都要能跑、能测、能给用户留下印象。</p>
+          <p>SuperMew 项目里我手写了 Dense+BM25 Hybrid 检索 + RRF 融合、三级分块 Auto-merging、三层记忆架构，并用 CMRC2018/2019 做了消融评测——结论是 RRF 已足够强，HyDE 反而引入偏差。Pi Agent Desktop 则是用 Electron + React 做出个人极简版 Codex。</p>
+          <p>目前正在寻找<em style="color:var(--accent);font-style:normal;">AI 应用开发 / 前端实习</em>机会，愿意从 Agent 工程链路、RAG 系统、前端工程化到桌面端全链路投入。</p>
+        </div>
+
+        <!-- 工程蓝图档案卡 -->
+        <div class="blueprint" data-reveal>
+          <div class="blueprint__ring2"></div>
+          <div class="blueprint__center">C.</div>
+          <div class="bp__target bp__target--tl"></div>
+          <div class="bp__target bp__target--tr"></div>
+          <div class="bp__target bp__target--bl"></div>
+          <div class="bp__target bp__target--br"></div>
+
+          <div class="bp__anno bp__anno--tl">
+            <div class="bp__lead"><span class="bp__sq"></span>PROFILE.001</div>
+            <div class="bp__mono bp__mono--key">NAME   : CHASEN-LIAO</div>
+            <div class="bp__mono">ROLE   : AI / FRONT-END INTERN</div>
+            <div class="bp__mono">STATUS : AVAILABLE</div>
+          </div>
+          <div class="bp__anno bp__anno--spec">
+            <div class="bp__lead"><span class="bp__sq"></span>SPEC</div>
+            <div class="bp__mono bp__mono--key">EDU    : GDUFE / CS</div>
+            <div class="bp__mono">FOCUS  : AI AGENT / RAG</div>
+            <div class="bp__mono">FRONT  : REACT / TS</div>
+            <span class="bp__hr"></span>
+            <div class="bp__mono">LANG   : ZH / EN</div>
+          </div>
+          <div class="bp__anno bp__anno--ver">
+            <div class="bp__lead"><span class="bp__sq"></span>VER</div>
+            <div class="bp__mono bp__mono--key">V 1.0.0</div>
+            <div class="bp__mono">EST. 2024</div>
+            <div class="bp__mono">CHINA / GDUFE</div>
+          </div>
+
+          <div class="bp__anno bp__anno--tr">
+            <div class="bp__lead">CATEGORY <span class="bp__sq"></span></div>
+            <div class="bp__mono bp__mono--key">· AI / LLM</div>
+            <div class="bp__mono">· FRONT-END</div>
+            <div class="bp__mono">· TOOLING</div>
+          </div>
+          <div class="bp__anno bp__anno--cat">
+            <div class="bp__lead">FOCUS <span class="bp__sq"></span></div>
+            <div class="bp__mono bp__mono--key">AGENTIC RAG</div>
+            <div class="bp__mono">MEMORY ARCH</div>
+            <div class="bp__mono">DESKTOP CLIENT</div>
+            <span class="bp__hr" style="margin-left:auto;"></span>
+            <div class="bp__mono">HYBRID RETRIEVAL</div>
+          </div>
+          <div class="bp__anno bp__anno--focus">
+            <div class="bp__lead">METHODOLOGY <span class="bp__sq"></span></div>
+            <div class="bp__mono bp__mono--key">REAL PROJECTS</div>
+            <div class="bp__mono">EVAL / BENCHMARK</div>
+            <div class="bp__mono">SHIP &amp; ITERATE</div>
+          </div>
+          <div class="bp__anno bp__anno--est">
+            <div class="bp__lead">2024 — NOW <span class="bp__sq"></span></div>
+            <div class="bp__mono bp__mono--key">50 REPOS · ⌀</div>
+            <div class="bp__mono">89 FOLLOWERS</div>
+            <div class="bp__mono">OPEN TO INTERN</div>
+          </div>
+          <div class="bp__coords">N 23°08′&nbsp;&nbsp;&nbsp;E 113°15′&nbsp;&nbsp;·&nbsp;&nbsp;GUANGZHOU&nbsp;&nbsp;·&nbsp;&nbsp;ID // CHASEN-LIAO</div>
+        </div>
+      </div>
+
+      <div class="about__right" data-reveal>
+        <!-- 技能信号台 -->
+        <div class="signal">
+          <div class="signal__head">
+            <div class="signal__title">技能栈</div>
+            <div class="signal__legend">PROFICIENCY · <b>●</b> ACTIVE</div>
+          </div>
+          <ul class="signal__list">
+            <li class="skill-row">
+              <div class="skill__name">Python <em>core</em></div>
+              <div class="skill__bars"><i style="height:32%"></i><i style="height:44%"></i><i style="height:56%"></i><i style="height:68%"></i><i style="height:80%"></i><i style="height:90%"></i><i style="height:88%"></i></div>
+              <div class="skill__level">88%</div>
+              <div class="skill__years">2 YRS</div>
+            </li>
+            <li class="skill-row">
+              <div class="skill__name">LangChain / LangGraph <em>agent</em></div>
+              <div class="skill__bars"><i style="height:32%"></i><i style="height:44%"></i><i style="height:56%"></i><i style="height:68%"></i><i style="height:80%"></i><i style="height:85%"></i><i style="height:82%"></i></div>
+              <div class="skill__level">85%</div>
+              <div class="skill__years">1 YR</div>
+            </li>
+            <li class="skill-row">
+              <div class="skill__name">RAG / 检索系统 <em>hybrid</em></div>
+              <div class="skill__bars"><i style="height:32%"></i><i style="height:44%"></i><i style="height:56%"></i><i style="height:68%"></i><i style="height:80%"></i><i style="height:88%"></i><i style="height:85%"></i></div>
+              <div class="skill__level">85%</div>
+              <div class="skill__years">1 YR</div>
+            </li>
+            <li class="skill-row">
+              <div class="skill__name">TypeScript / React <em>front</em></div>
+              <div class="skill__bars"><i style="height:32%"></i><i style="height:44%"></i><i style="height:56%"></i><i style="height:68%"></i><i style="height:80%"></i><i style="height:90%"></i><i style="height:85%"></i></div>
+              <div class="skill__level">85%</div>
+              <div class="skill__years">2 YRS</div>
+            </li>
+            <li class="skill-row">
+              <div class="skill__name">Milvus / 向量库 <em>retrieval</em></div>
+              <div class="skill__bars"><i style="height:32%"></i><i style="height:44%"></i><i style="height:56%"></i><i style="height:68%"></i><i style="height:78%"></i><i style="height:75%"></i><i style="height:72%"></i></div>
+              <div class="skill__level">75%</div>
+              <div class="skill__years">1 YR</div>
+            </li>
+            <li class="skill-row">
+              <div class="skill__name">FastAPI <em>backend</em></div>
+              <div class="skill__bars"><i style="height:32%"></i><i style="height:44%"></i><i style="height:56%"></i><i style="height:68%"></i><i style="height:78%"></i><i style="height:75%"></i><i style="height:70%"></i></div>
+              <div class="skill__level">72%</div>
+              <div class="skill__years">1 YR</div>
+            </li>
+            <li class="skill-row">
+              <div class="skill__name">Electron <em>desktop</em></div>
+              <div class="skill__bars skill__bars--fade"><i style="height:32%"></i><i style="height:44%"></i><i style="height:56%"></i><i style="height:68%"></i><i style="height:70%"></i><i style="height:65%"></i><i style="height:60%"></i></div>
+              <div class="skill__level">68%</div>
+              <div class="skill__years">1 YR</div>
+            </li>
+            <li class="skill-row">
+              <div class="skill__name">HTML / CSS <em>layout</em></div>
+              <div class="skill__bars"><i style="height:32%"></i><i style="height:44%"></i><i style="height:56%"></i><i style="height:68%"></i><i style="height:80%"></i><i style="height:90%"></i><i style="height:92%"></i></div>
+              <div class="skill__level">90%</div>
+              <div class="skill__years">3 YRS</div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════ 03 WORK ═══════════ -->
+    <section class="work" id="work">
+      <div class="work__head">
+        <h2 class="work__title" data-reveal">作品<br>档案。</h2>
+        <div class="work__meta" data-reveal>
+          <b>ARCHIVE // 2024 — 2026</b><br>
+          SELECTED PROJECTS · 06<br>
+          CLICK TO EXPLORE
+        </div>
+      </div>
+      <div class="work__cats" data-reveal>
+        <span>全部</span><span class="cat-sep"></span>
+        <span>AI / RAG</span><span class="cat-sep"></span>
+        <span>桌面客户端</span><span class="cat-sep"></span>
+        <span>工具链</span><span class="cat-sep"></span>
+        <span>文档</span>
+      </div>
+
+      <div class="work__list" data-reveal>
+        <a class="wrow" href="https://github.com/Chasen-Liao/pi-agent-desktop" target="_blank" rel="noopener noreferrer" tabindex="0">
+          <div class="wrow__idx">01</div>
+          <div class="wrow__body">
+            <div class="wrow__meta-row">
+              <span class="wrow__tag wrow__tag--accent">桌面 / 前端</span>
+              <span class="wrow__date">2026 · TypeScript</span>
+            </div>
+            <div class="wrow__title">Pi Agent Desktop — 编程智能体桌面客户端</div>
+            <div class="wrow__dek">基于 Electron 的 Pi 编程智能体桌面客户端，目标做出个人极简版 Codex。原生窗口、会话分叉与分支导航、SSE 流式对话、模型中途切换、内置文件浏览器。Next.js + React + TypeScript。</div>
+          </div>
+          <div class="wrow__rule"></div>
+          <div class="wrow__stack">
+            <span class="wrow__chip">TypeScript</span>
+            <span class="wrow__chip">Electron</span>
+            <span class="wrow__chip">React</span>
+          </div>
+          <div class="wrow__thumb"><div class="wrow__thumb-ph">⭐ 20 · PI / DESKTOP</div></div>
+          <div class="wrow__arr">→</div>
+        </a>
+
+        <a class="wrow" href="https://github.com/Chasen-Liao/SuperMew" target="_blank" rel="noopener noreferrer" tabindex="0">
+          <div class="wrow__idx">02</div>
+          <div class="wrow__body">
+            <div class="wrow__meta-row">
+              <span class="wrow__tag wrow__tag--accent">AI / RAG</span>
+              <span class="wrow__date">2026 · Python</span>
+            </div>
+            <div class="wrow__title">SuperMew — Agentic RAG 与三层记忆架构</div>
+            <div class="wrow__dek">改进 Agentic RAG 的 Context Engineering 与 Memory 架构。三级分块 + Auto-merging、Dense+BM25 Hybrid 检索 + RRF 融合、HyDE/Step-back 查询重写、PostgresSaver+PostgresStore+Milvus 三层记忆。CMRC2018/2019 检索评测。</div>
+          </div>
+          <div class="wrow__rule"></div>
+          <div class="wrow__stack">
+            <span class="wrow__chip">LangGraph</span>
+            <span class="wrow__chip">Milvus</span>
+            <span class="wrow__chip">FastAPI</span>
+          </div>
+          <div class="wrow__thumb"><div class="wrow__thumb-ph">⭐ 3 · RAG / MEMORY</div></div>
+          <div class="wrow__arr">→</div>
+        </a>
+
+        <a class="wrow" href="https://github.com/Chasen-Liao/resume-skills" target="_blank" rel="noopener noreferrer" tabindex="0">
+          <div class="wrow__idx">03</div>
+          <div class="wrow__body">
+            <div class="wrow__meta-row">
+              <span class="wrow__tag wrow__tag--accent">工具链</span>
+              <span class="wrow__date">2026 · HTML</span>
+            </div>
+            <div class="wrow__title">Resume Skills — 简历生成 Claude Code 插件</div>
+            <div class="wrow__dek">对话式简历构建器 + JD 关键词定制器。6 种设计风格 × 18 套配色 × 13 组字体，STAR 法则写作，A4 单页强约束，ATS 兼容。先建通版再针对每个岗位做关键词对齐。</div>
+          </div>
+          <div class="wrow__rule"></div>
+          <div class="wrow__stack">
+            <span class="wrow__chip">Claude Plugin</span>
+            <span class="wrow__chip">HTML</span>
+          </div>
+          <div class="wrow__thumb"><div class="wrow__thumb-ph">⭐ 3 · RESUME / JD</div></div>
+          <div class="wrow__arr">→</div>
+        </a>
+
+        <a class="wrow" href="https://github.com/Chasen-Liao/Everything-claude-code-Doc" target="_blank" rel="noopener noreferrer" tabindex="0">
+          <div class="wrow__idx">04</div>
+          <div class="wrow__body">
+            <div class="wrow__meta-row">
+              <span class="wrow__tag">文档</span>
+              <span class="wrow__date">2025 · Python</span>
+            </div>
+            <div class="wrow__title">Everything Claude Code — 中文使用指南</div>
+            <div class="wrow__dek">基于 everything-claude-code 仓库编写的中文使用指南，覆盖核心命令、子 Agent 多任务协作、调试与 TDD 工作流。持续更新中，社区讨论使用技巧。</div>
+          </div>
+          <div class="wrow__rule"></div>
+          <div class="wrow__stack">
+            <span class="wrow__chip">Markdown</span>
+            <span class="wrow__chip">Docs</span>
+          </div>
+          <div class="wrow__thumb"><div class="wrow__thumb-ph">⭐ 11 · ECC / GUIDE</div></div>
+          <div class="wrow__arr">→</div>
+        </a>
+      </div>
+
+      <a class="work__all" href="#contact">完整作品集 <span class="arr">→</span></a>
+    </section>
+
+    <!-- ═══════════ 04 CONTACT ═══════════ -->
+    <section class="contact" id="contact">
+      <div class="contact__center">
+        <div class="contact__kicker" data-reveal>
+          <span class="ln"></span>GET IN TOUCH / 联系<span class="ln"></span>
+        </div>
+        <h2 class="contact__title" data-reveal>
+          Let's talk.
+          <span class="contact__underline"></span>
+        </h2>
+        <p class="contact__sub" data-reveal>聊聊 AI Agent、RAG 系统，或者一起搞点事情。</p>
+        <div class="contact__status" data-reveal>
+          <span class="pulse"></span>当前开放实习机会 · Available for AI / Front-End Internship
+        </div>
+      </div>
+
+      <div class="contact__marquee" data-reveal>
+        <div class="marquee__track">
+          <div class="marquee__set">
+            <span><b>Agentic RAG</b></span><span>·</span>
+            <span>LangGraph</span><span>·</span>
+            <span><b>Hybrid Retrieval</b></span><span>·</span>
+            <span>Milvus</span><span>·</span>
+            <span><b>Memory Arch</b></span><span>·</span>
+            <span>Electron</span><span>·</span>
+            <span><b>React / TS</b></span><span>·</span>
+            <span>FastAPI</span><span>·</span>
+            <span><b>Auto-merging</b></span><span>·</span>
+            <span>RRF Fusion</span><span>·</span>
+            <span><b>CMRC Eval</b></span><span>·</span>
+          </div>
+          <div class="marquee__set">
+            <span><b>Agentic RAG</b></span><span>·</span>
+            <span>LangGraph</span><span>·</span>
+            <span><b>Hybrid Retrieval</b></span><span>·</span>
+            <span>Milvus</span><span>·</span>
+            <span><b>Memory Arch</b></span><span>·</span>
+            <span>Electron</span><span>·</span>
+            <span><b>React / TS</b></span><span>·</span>
+            <span>FastAPI</span><span>·</span>
+            <span><b>Auto-merging</b></span><span>·</span>
+            <span>RRF Fusion</span><span>·</span>
+            <span><b>CMRC Eval</b></span><span>·</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="contact__bar">
+        <a class="cbar__item" href="mailto:2558891266@qq.com">
+          <div>
+            <div class="cbar__lbl">EMAIL</div>
+            <div class="cbar__val cbar__val--mail" style="margin-top:8px;">2558891266@qq.com</div>
+          </div>
+          <span class="cbar__arr">→</span>
+        </a>
+        <a class="cbar__item" href="https://chasenclog.vercel.app/" target="_blank" rel="noopener noreferrer">
+          <div class="cbar__logo">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          </div>
+          <div>
+            <div class="cbar__lbl">BLOG</div>
+            <div class="cbar__val" style="margin-top:8px;">chasenclog.vercel.app <em>技术随笔</em></div>
+          </div>
+          <span class="cbar__arr">→</span>
+        </a>
+        <a class="cbar__item" href="https://github.com/Chasen-Liao" target="_blank" rel="noopener noreferrer">
+          <div class="cbar__logo">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+          </div>
+          <div>
+            <div class="cbar__lbl">GITHUB</div>
+            <div class="cbar__val" style="margin-top:8px;">@Chasen-Liao <em>50 repos · 89 followers</em></div>
+          </div>
+          <span class="cbar__arr">→</span>
+        </a>
+        <div class="cbar__item cbar__item--wechat">
+          <div class="cbar__lbl">RESUME / 简历 PDF</div>
+          <div class="qr">
+            <svg class="qr__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3M21 14v.01M14 21h.01M17 17v4M21 17v4M17 21h4"/></svg>
+            <div class="qr__txt">SCAN</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="contact__foot">
+        <div>© 2026 Chasen-Liao · CS @ GDUFE · Guangzhou, CN</div>
+        <a class="to-top" href="#hero" data-nav="hero">回到顶部 <span class="arr">↑</span></a>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    // 导航跳转（用 scrollTo 而非 scrollIntoView，避免 OD 内嵌预览定位漂移）
+    var NAV_OFFSET = 78; // --nav-h
+    document.querySelectorAll('[data-nav]').forEach(function(el){
+      el.addEventListener('click', function(e){
+        var target = document.getElementById(el.getAttribute('data-nav'));
+        if(target){
+          e.preventDefault();
+          var y = target.getBoundingClientRect().top + window.pageYOffset - NAV_OFFSET + 4;
+          window.scrollTo({ top: y, left: 0, behavior: 'smooth' });
+        }
+      });
+    });
+
+    // 导航高亮（IntersectionObserver）
+    var sections = document.querySelectorAll('main section[id]');
+    var navLinks = document.querySelectorAll('.nav__links a[data-nav]');
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if(entry.isIntersecting){
+          var id = entry.target.id;
+          navLinks.forEach(function(link){
+            link.classList.toggle('is-active', link.getAttribute('data-nav') === id);
+          });
+        }
+      });
+    }, {rootMargin:'-40% 0px -55% 0px'});
+    sections.forEach(function(s){ io.observe(s); });
+
+    // 入场动画：JS 只切 class，timing/easing 全在 CSS
+    function revealOnScroll(){
+      var els = document.querySelectorAll('[data-reveal]:not(.is-revealed)');
+      els.forEach(function(el){
+        var rect = el.getBoundingClientRect();
+        if(rect.top < window.innerHeight * 0.88){
+          el.classList.add('is-revealed');
+        }
+      });
+    }
+    window.addEventListener('scroll', revealOnScroll, {passive:true});
+    window.addEventListener('load', revealOnScroll);
+    window.addEventListener('resize', revealOnScroll);
+    revealOnScroll();
+  </script>
+</body>
+</html>
