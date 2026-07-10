@@ -9,9 +9,29 @@
   <meta property="og:title" content="Chasen-Liao — CS @ GDUFE × AI Agent / RAG Builder" />
   <meta property="og:description" content="Chasen-Liao — 广东财经大学计算机科学在读，专注 AI Agent / RAG 与前端工程化。用真实项目探索 LLM 应用边界。" />
   <meta property="og:url" content="https://chasen-intro.vercel.app" />
-  <meta property="og:image" content="https://chasen-intro.vercel.app/favicon.svg" />
-  <meta name="twitter:card" content="summary" />
+  <meta property="og:image" content="https://chasen-intro.vercel.app/assets/头像_400x400.jpg" />
+  <meta name="twitter:card" content="summary_large_image" />
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "Chasen Liao",
+    "alternateName": "廖长升",
+    "jobTitle": "AI Agent / RAG & Front-end Engineer",
+    "url": "https://chasen-intro.vercel.app",
+    "sameAs": [
+      "https://github.com/Chasen-Liao",
+      "https://x.com/chasen_liao",
+      "https://chasenclog.vercel.app"
+    ],
+    "alumniOf": {
+      "@type": "CollegeOrUniversity",
+      "name": "Guangdong University of Finance and Economics"
+    }
+  }
+  </script>
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -126,6 +146,31 @@
     .nav__github:hover{color:var(--accent);transform:translateY(-1px);}
     .nav__links a.is-active{color:var(--ink);}
     .nav__links a.is-active::after{transform:scaleX(1);}
+
+    /* ───── 导航右侧模式切换胶囊开关 (RESUME / SOCIAL) ───── */
+    .mode-capsule{
+      display:inline-flex;align-items:center;
+      height:32px;padding:0 4px;border-radius:2px;
+      border:1px solid var(--line);background:var(--paper);
+      font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:.08em;
+      color:var(--muted);cursor:pointer;transition:all .25s var(--ease);
+      margin-left:14px;
+    }
+    .mode-capsule:hover{border-color:var(--ink);}
+    .mode-capsule__opt{
+      display:inline-flex;align-items:center;gap:5px;
+      padding:0 8px;height:24px;border-radius:1px;
+      transition:all .25s var(--ease);color:var(--muted);
+    }
+    .mode-capsule__opt.is-active{
+      background:var(--ink);color:var(--paper);
+    }
+    .mode-capsule__dot{
+      width:5px;height:5px;border-radius:50%;
+      background:var(--accent);display:none;
+    }
+    .mode-capsule__opt.is-active .mode-capsule__dot{display:inline-block;}
+    .mode-capsule__sep{color:var(--line);padding:0 1px;}
 
     [data-mode-copy]{transition:opacity .18s var(--ease),transform .18s var(--ease);}
     body[data-mode="resume"] [data-social],
@@ -486,9 +531,20 @@
     }
     .work__meta b{color:var(--ink-soft);font-weight:600;}
     .work__cats{
-      display:flex;align-items:center;gap:20px;
+      display:flex;align-items:center;gap:18px;flex-wrap:wrap;
       font-size:14px;letter-spacing:.04em;color:var(--ink);
-      padding-bottom:26px;border-bottom:1px solid var(--line);margin-bottom:8px;
+      padding-bottom:22px;border-bottom:1px solid var(--line);margin-bottom:8px;
+    }
+    .work__cat-btn{
+      background:none;border:none;font-family:var(--sans-cjk);font-size:14px;
+      color:var(--ink-soft);cursor:pointer;transition:all .25s var(--ease);
+      display:inline-flex;align-items:center;gap:6px;padding:4px 2px;
+    }
+    .work__cat-btn:hover,.work__cat-btn.is-active{
+      color:var(--accent);font-weight:500;
+    }
+    .work__cat-btn.is-active::before{
+      content:"■";font-size:8px;color:var(--accent);
     }
     .cat-sep{width:1px;height:14px;background:var(--line);}
 
@@ -546,6 +602,15 @@
     }
     .wrow__arr{justify-self:end;color:var(--ink);transition:transform .3s var(--ease),color .3s;}
     .wrow:hover .wrow__arr{transform:translateX(5px);color:var(--accent);}
+    .wrow{
+      max-height:280px;opacity:1;overflow:hidden;
+      transition:max-height .35s var(--ease),opacity .28s var(--ease),padding .35s var(--ease),border-color .35s var(--ease);
+    }
+    .wrow.is-filtered-out{
+      max-height:0 !important;opacity:0 !important;
+      padding-top:0 !important;padding-bottom:0 !important;
+      border-bottom-color:transparent !important;pointer-events:none;
+    }
 
     .work__all{
       display:inline-flex;align-items:center;gap:10px;
@@ -677,6 +742,8 @@
       .nav__links{gap:10px;font-size:10px;}
       .nav__links a{min-width:44px;justify-content:center;padding:0 2px;margin:0 -2px;}
       .nav__links .sep,.nav__stat{display:none;}
+      .mode-capsule{margin-left:6px;height:28px;font-size:9px;}
+      .mode-capsule__opt{padding:0 5px;height:20px;}
 
       .hero{
         grid-template-columns:1fr;
@@ -782,6 +849,11 @@
       <span class="sep">/</span>
       <a href="#contact" data-nav="contact">联系</a>
       <span class="nav__stat"><i></i>开放机会</span>
+      <button class="mode-capsule" type="button" data-mode-toggle aria-label="切换简历/社交模式">
+        <span class="mode-capsule__opt is-active" data-capsule="resume"><i class="mode-capsule__dot"></i>RESUME</span>
+        <span class="mode-capsule__sep">/</span>
+        <span class="mode-capsule__opt" data-capsule="social"><i class="mode-capsule__dot"></i>SOCIAL</span>
+      </button>
     </div>
   </nav>
 
@@ -983,22 +1055,22 @@
         </div>
       </div>
       <div class="work__cats" data-reveal data-mode-copy data-resume>
-        <span>全部</span><span class="cat-sep"></span>
-        <span>AI / RAG</span><span class="cat-sep"></span>
-        <span>桌面客户端</span><span class="cat-sep"></span>
-        <span>工具链</span><span class="cat-sep"></span>
-        <span>文档</span>
+        <button type="button" class="work__cat-btn is-active" data-filter="全部">全部</button><span class="cat-sep"></span>
+        <button type="button" class="work__cat-btn" data-filter="AI / RAG">AI / RAG</button><span class="cat-sep"></span>
+        <button type="button" class="work__cat-btn" data-filter="桌面客户端">桌面客户端</button><span class="cat-sep"></span>
+        <button type="button" class="work__cat-btn" data-filter="工具链">工具链</button><span class="cat-sep"></span>
+        <button type="button" class="work__cat-btn" data-filter="文档">文档</button>
       </div>
       <div class="work__cats" data-reveal data-mode-copy data-social>
-        <span>全部</span><span class="cat-sep"></span>
-        <span>Claude Code</span><span class="cat-sep"></span>
-        <span>Agent 实验</span><span class="cat-sep"></span>
-        <span>工具链</span><span class="cat-sep"></span>
-        <span>随笔</span>
+        <button type="button" class="work__cat-btn is-active" data-filter="全部">全部</button><span class="cat-sep"></span>
+        <button type="button" class="work__cat-btn" data-filter="Claude Code">Claude Code</button><span class="cat-sep"></span>
+        <button type="button" class="work__cat-btn" data-filter="Agent 实验">Agent 实验</button><span class="cat-sep"></span>
+        <button type="button" class="work__cat-btn" data-filter="工具链">工具链</button><span class="cat-sep"></span>
+        <button type="button" class="work__cat-btn" data-filter="随笔">随笔</button>
       </div>
 
       <div class="work__list" data-reveal>
-        <a class="wrow" href="https://github.com/Chasen-Liao/pi-agent-desktop" target="_blank" rel="noopener noreferrer" aria-label="打开 Pi Agent Desktop GitHub 项目，新窗口" tabindex="0">
+        <a class="wrow" data-cats="全部 桌面客户端 前端 Claude Code" href="https://github.com/Chasen-Liao/pi-agent-desktop" target="_blank" rel="noopener noreferrer" aria-label="打开 Pi Agent Desktop GitHub 项目，新窗口" tabindex="0">
           <div class="wrow__idx">01</div>
           <div class="wrow__body">
             <div class="wrow__meta-row">
@@ -1018,7 +1090,7 @@
           <div class="wrow__arr">→</div>
         </a>
 
-        <a class="wrow" href="https://github.com/Chasen-Liao/SuperMew" target="_blank" rel="noopener noreferrer" aria-label="打开 SuperMew GitHub 项目，新窗口" tabindex="0">
+        <a class="wrow" data-cats="全部 AI / RAG Agent 实验" href="https://github.com/Chasen-Liao/SuperMew" target="_blank" rel="noopener noreferrer" aria-label="打开 SuperMew GitHub 项目，新窗口" tabindex="0">
           <div class="wrow__idx">02</div>
           <div class="wrow__body">
             <div class="wrow__meta-row">
@@ -1038,7 +1110,7 @@
           <div class="wrow__arr">→</div>
         </a>
 
-        <a class="wrow" href="https://github.com/Chasen-Liao/resume-skills" target="_blank" rel="noopener noreferrer" aria-label="打开 Resume Skills GitHub 项目，新窗口" tabindex="0">
+        <a class="wrow" data-cats="全部 工具链 Claude Code" href="https://github.com/Chasen-Liao/resume-skills" target="_blank" rel="noopener noreferrer" aria-label="打开 Resume Skills GitHub 项目，新窗口" tabindex="0">
           <div class="wrow__idx">03</div>
           <div class="wrow__body">
             <div class="wrow__meta-row">
@@ -1057,7 +1129,7 @@
           <div class="wrow__arr">→</div>
         </a>
 
-        <a class="wrow" href="https://github.com/Chasen-Liao/Everything-claude-code-Doc" target="_blank" rel="noopener noreferrer" aria-label="打开 Everything Claude Code 中文指南 GitHub 项目，新窗口" tabindex="0">
+        <a class="wrow" data-cats="全部 文档 随笔 Claude Code" href="https://github.com/Chasen-Liao/Everything-claude-code-Doc" target="_blank" rel="noopener noreferrer" aria-label="打开 Everything Claude Code 中文指南 GitHub 项目，新窗口" tabindex="0">
           <div class="wrow__idx">04</div>
           <div class="wrow__body">
             <div class="wrow__meta-row">
@@ -1214,7 +1286,7 @@
     (function initModeToggle(){
       var storageKey = 'chasen-site-mode';
       var body = document.body;
-      var toggle = document.querySelector('[data-mode-toggle]');
+      var toggles = document.querySelectorAll('[data-mode-toggle]');
       var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       var transitionRunning = false;
 
@@ -1226,9 +1298,14 @@
         mode = normalizeMode(mode);
         body.setAttribute('data-mode', mode);
         body.classList.remove('is-mode-switching');
-        if(toggle){
+        toggles.forEach(function(toggle){
           toggle.setAttribute('aria-pressed', mode === 'social' ? 'true' : 'false');
-        }
+        });
+        document.querySelectorAll('.mode-capsule__opt').forEach(function(opt){
+          var isCurrent = opt.getAttribute('data-capsule') === mode;
+          opt.classList.toggle('is-active', isCurrent);
+        });
+        if(window.resetWorkFilter) window.resetWorkFilter();
         try{ localStorage.setItem(storageKey, mode); }catch(e){}
       }
 
@@ -1411,12 +1488,32 @@
       try{ savedMode = normalizeMode(localStorage.getItem(storageKey)); }catch(e){}
       setMode(savedMode, false);
 
-      if(toggle){
+      toggles.forEach(function(toggle){
         toggle.addEventListener('click', function(){
           var next = body.getAttribute('data-mode') === 'social' ? 'resume' : 'social';
           setMode(next, true);
         });
+      });
+    })();
+
+    // 作品分类筛选（丝滑过滤折叠）
+    (function initWorkFilter(){
+      function applyFilter(filterVal){
+        document.querySelectorAll('.work__cat-btn').forEach(function(btn){
+          btn.classList.toggle('is-active', btn.getAttribute('data-filter') === filterVal);
+        });
+        document.querySelectorAll('.wrow').forEach(function(row){
+          var cats = row.getAttribute('data-cats') || '全部';
+          var match = (filterVal === '全部' || cats.indexOf(filterVal) !== -1);
+          row.classList.toggle('is-filtered-out', !match);
+        });
       }
+      document.querySelectorAll('.work__cat-btn').forEach(function(btn){
+        btn.addEventListener('click', function(){
+          applyFilter(btn.getAttribute('data-filter') || '全部');
+        });
+      });
+      window.resetWorkFilter = function(){ applyFilter('全部'); };
     })();
 
     // 导航跳转（用 scrollTo 而非 scrollIntoView，避免 OD 内嵌预览定位漂移）
@@ -1593,7 +1690,11 @@
           });
         }
 
+        var isPaused = false;
+        var rafId = null;
+
         function draw(now){
+          if(isPaused) return;
           var elapsed = now - startTime;
           if(elapsed > baseRevealMs) portrait.classList.add('is-base-visible');
           ctx.clearRect(0, 0, box.canvasW, box.h);
@@ -1639,7 +1740,26 @@
             ctx.fillRect(x, y, s, s);
           });
           ctx.globalAlpha = 1;
-          requestAnimationFrame(draw);
+          rafId = requestAnimationFrame(draw);
+        }
+
+        function loopStart(){
+          if(!isPaused && !rafId){
+            rafId = requestAnimationFrame(draw);
+          }
+        }
+        function loopPause(){
+          isPaused = true;
+          if(rafId){
+            cancelAnimationFrame(rafId);
+            rafId = null;
+          }
+        }
+        function loopResume(){
+          if(isPaused){
+            isPaused = false;
+            loopStart();
+          }
         }
 
         media.addEventListener('pointermove', function(e){
@@ -1654,9 +1774,23 @@
           layoutParticles(false);
         });
 
+        document.addEventListener('visibilitychange', function(){
+          if(document.hidden) loopPause();
+          else loopResume();
+        });
+        if('IntersectionObserver' in window){
+          var obs = new IntersectionObserver(function(entries){
+            entries.forEach(function(entry){
+              if(entry.isIntersecting) loopResume();
+              else loopPause();
+            });
+          }, {rootMargin:'120px'});
+          obs.observe(portrait);
+        }
+
         measure();
         sample();
-        requestAnimationFrame(draw);
+        loopStart();
       }
 
       if(img.complete) start();
