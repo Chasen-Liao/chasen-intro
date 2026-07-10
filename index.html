@@ -5,6 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Chasen-Liao — CS @ GDUFE × AI Agent / RAG Builder</title>
   <meta name="description" content="Chasen-Liao — 广东财经大学计算机科学在读，专注 AI Agent / RAG 与前端工程化。用真实项目探索 LLM 应用边界。" />
+  <meta property="og:type" content="profile" />
+  <meta property="og:title" content="Chasen-Liao — CS @ GDUFE × AI Agent / RAG Builder" />
+  <meta property="og:description" content="Chasen-Liao — 广东财经大学计算机科学在读，专注 AI Agent / RAG 与前端工程化。用真实项目探索 LLM 应用边界。" />
+  <meta property="og:url" content="https://chasen-intro.vercel.app" />
+  <meta property="og:image" content="https://chasen-intro.vercel.app/favicon.svg" />
+  <meta name="twitter:card" content="summary" />
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -607,7 +613,7 @@
 
     /* 底部联系栏 */
     .contact__bar{
-      display:grid;grid-template-columns:1fr 1fr 1fr 1fr;
+      display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
       border-top:1px solid var(--line);
     }
     .cbar__item{
@@ -633,18 +639,6 @@
 
     .cbar__logo{width:28px;height:28px;flex:none;}
     .cbar__logo svg{width:100%;height:100%;}
-
-    /* 微信 QR 占位 */
-    .cbar__item--wechat{flex-direction:column;align-items:flex-start;gap:8px;}
-    .qr{
-      position:relative;width:88px;height:88px;margin-top:4px;
-      border:1px solid var(--line);
-      display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;
-      background-image:radial-gradient(var(--line) .8px,transparent .8px);background-size:7px 7px;
-      color:var(--muted);
-    }
-    .qr__icon{width:24px;height:24px;}
-    .qr__txt{font-size:10px;letter-spacing:.08em;}
 
     /* 页脚 */
     .contact__foot{
@@ -758,7 +752,7 @@
 
   <!-- 顶部导航 -->
   <nav class="nav" aria-label="主导航">
-    <button class="nav__brand" type="button" data-mode-toggle aria-label="Chasen"><span>Chasen</span><span class="accent-dot"></span></button>
+    <button class="nav__brand" type="button" data-mode-toggle aria-pressed="false" aria-label="Chasen · 切换简历/社交模式"><span>Chasen</span><span class="accent-dot"></span></button>
     <div class="nav__links">
       <a href="#hero" data-nav="hero">关于</a>
       <span class="sep">/</span>
@@ -884,8 +878,8 @@
           </div>
           <div class="bp__anno bp__anno--est">
             <div class="bp__lead">2024 — NOW <span class="bp__sq"></span></div>
-            <div class="bp__mono bp__mono--key">50 REPOS · ⌀</div>
-            <div class="bp__mono">89 FOLLOWERS</div>
+            <div class="bp__mono bp__mono--key">51 REPOS · ⌀</div>
+            <div class="bp__mono">87 FOLLOWERS</div>
             <div class="bp__mono">OPEN TO INTERN</div>
           </div>
           <div class="bp__coords">N 23°08′&nbsp;&nbsp;&nbsp;E 113°15′&nbsp;&nbsp;·&nbsp;&nbsp;GUANGZHOU&nbsp;&nbsp;·&nbsp;&nbsp;ID // CHASEN-LIAO</div>
@@ -959,7 +953,7 @@
         <h2 class="work__title" data-reveal data-mode-copy><span data-resume>作品<br>档案。</span><span data-social>构建<br>记录。</span></h2>
         <div class="work__meta" data-reveal data-mode-copy data-resume>
           <b>ARCHIVE // 2024 — 2026</b><br>
-          SELECTED PROJECTS · 06<br>
+          SELECTED PROJECTS · 04<br>
           CLICK TO EXPLORE
         </div>
         <div class="work__meta" data-reveal data-mode-copy data-social>
@@ -1000,7 +994,7 @@
             <span class="wrow__chip">Electron</span>
             <span class="wrow__chip">React</span>
           </div>
-          <div class="wrow__thumb"><div class="wrow__thumb-ph">⭐ 20 · PI / DESKTOP</div></div>
+          <div class="wrow__thumb"><div class="wrow__thumb-ph">⭐ 19 · PI / DESKTOP</div></div>
           <div class="wrow__arr">→</div>
         </a>
 
@@ -1058,7 +1052,7 @@
             <span class="wrow__chip">Markdown</span>
             <span class="wrow__chip">Docs</span>
           </div>
-          <div class="wrow__thumb"><div class="wrow__thumb-ph">⭐ 11 · ECC / GUIDE</div></div>
+          <div class="wrow__thumb"><div class="wrow__thumb-ph">⭐ 12 · ECC / GUIDE</div></div>
           <div class="wrow__arr">→</div>
         </a>
       </div>
@@ -1159,17 +1153,30 @@
           </div>
           <div>
             <div class="cbar__lbl">GITHUB</div>
-            <div class="cbar__val" style="margin-top:8px;">@Chasen-Liao <em>50 repos · 89 followers</em></div>
+            <div class="cbar__val" style="margin-top:8px;">@Chasen-Liao <em>51 repos · 87 followers</em></div>
           </div>
           <span class="cbar__arr">→</span>
         </a>
-        <div class="cbar__item cbar__item--wechat">
-          <div class="cbar__lbl">RESUME / 简历 PDF</div>
-          <div class="qr">
-            <svg class="qr__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3M21 14v.01M14 21h.01M17 17v4M21 17v4M17 21h4"/></svg>
-            <div class="qr__txt">SCAN</div>
+        <a class="cbar__item" href="https://x.com/chasen_liao" target="_blank" rel="noopener noreferrer" aria-label="X 主页，新窗口">
+          <div class="cbar__logo">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
           </div>
-        </div>
+          <div>
+            <div class="cbar__lbl">X / TWITTER</div>
+            <div class="cbar__val" style="margin-top:8px;">@chasen_liao <em>动态 / build log</em></div>
+          </div>
+          <span class="cbar__arr">→</span>
+        </a>
+        <a class="cbar__item" href="assets/简历/通用简历母版.html" target="_blank" rel="noopener" aria-label="查看在线简历，新窗口">
+          <div class="cbar__logo">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="14" y2="17"/></svg>
+          </div>
+          <div>
+            <div class="cbar__lbl">RESUME / 简历</div>
+            <div class="cbar__val" style="margin-top:8px;">在线简历 <em>A4 可打印</em></div>
+          </div>
+          <span class="cbar__arr">→</span>
+        </a>
       </div>
 
       <div class="contact__foot">
@@ -1196,6 +1203,9 @@
         mode = normalizeMode(mode);
         body.setAttribute('data-mode', mode);
         body.classList.remove('is-mode-switching');
+        if(toggle){
+          toggle.setAttribute('aria-pressed', mode === 'social' ? 'true' : 'false');
+        }
         try{ localStorage.setItem(storageKey, mode); }catch(e){}
       }
 
