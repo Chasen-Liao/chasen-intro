@@ -1,6 +1,12 @@
 {
   "version": 1,
   "skills": {
+    "personal-website": {
+      "source": "Sac-Y/identity-skill",
+      "sourceType": "github",
+      "skillPath": "SKILL.md",
+      "computedHash": "6c191b2f581fd80b16f1f84b0a6d5151de0f385003dc480a02647d6f08798d1c"
+    },
     "vercel-react-best-practices": {
       "source": "vercel-labs/agent-skills",
       "sourceType": "github",
