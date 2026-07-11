@@ -692,6 +692,10 @@
       transition:background .25s;
       overflow:hidden;
     }
+    button.cbar__item{
+      border:0;font:inherit;color:inherit;text-align:left;cursor:pointer;
+      width:100%;
+    }
     .cbar__item:nth-child(1),
     .cbar__item:nth-child(2),
     .cbar__item:nth-child(3){
@@ -701,7 +705,7 @@
     .cbar__item:nth-child(5){
       grid-column:span 3;
     }
-    a.cbar__item:hover{background:#ECE5D6;}
+    .cbar__item:hover{background:#ECE5D6;}
     .cbar__info{flex:1;min-width:0;}
     .cbar__lbl{font-size:11px;letter-spacing:.16em;color:var(--muted);text-transform:uppercase;}
     .cbar__val{
@@ -715,9 +719,9 @@
       border-bottom:1px solid var(--ink);padding-bottom:3px;
       transition:color .25s,border-color .25s;
     }
-    a.cbar__item:hover .cbar__val--mail{color:var(--accent);border-color:var(--accent);}
+    .cbar__item:hover .cbar__val--mail{color:var(--accent);border-color:var(--accent);}
     .cbar__arr{color:var(--ink);transition:transform .25s var(--ease),color .25s;margin-left:auto;flex:none;}
-    a.cbar__item:hover .cbar__arr{transform:translateX(5px);color:var(--accent);}
+    .cbar__item:hover .cbar__arr{transform:translateX(5px);color:var(--accent);}
 
     .cbar__logo{width:28px;height:28px;flex:none;color:var(--ink);}
     .cbar__logo svg{width:100%;height:100%;}
@@ -1262,16 +1266,16 @@
           </div>
           <span class="cbar__arr">→</span>
         </a>
-        <a class="cbar__item" href="assets/简历/通用简历母版.html" target="_blank" rel="noopener" aria-label="查看在线简历，新窗口">
+        <button class="cbar__item" type="button" data-copy="lcz18318288755" aria-label="复制微信号 lcz18318288755">
           <div class="cbar__logo">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="14" y2="17"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
           </div>
           <div class="cbar__info">
-            <div class="cbar__lbl">RESUME / 简历</div>
-            <div class="cbar__val" style="margin-top:8px;">在线简历 <em>A4 可打印</em></div>
+            <div class="cbar__lbl">WECHAT / 微信</div>
+            <div class="cbar__val" style="margin-top:8px;">lcz18318288755 <em data-copy-hint>点击复制</em></div>
           </div>
           <span class="cbar__arr">→</span>
-        </a>
+        </button>
       </div>
 
       <div class="contact__foot">
@@ -1795,6 +1799,35 @@
 
       if(img.complete) start();
       else img.addEventListener('load', start, {once:true});
+    })();
+
+    // 微信号点击复制
+    (function initWechatCopy(){
+      var btn = document.querySelector('[data-copy]');
+      if(!btn) return;
+      var arr = btn.querySelector('.cbar__arr');
+      var hint = btn.querySelector('[data-copy-hint]');
+      var arrText = arr ? arr.textContent : '';
+      function flash(){
+        if(arr) arr.textContent = '✓';
+        if(hint) hint.textContent = '已复制';
+        setTimeout(function(){
+          if(arr) arr.textContent = arrText;
+          if(hint) hint.textContent = '点击复制';
+        }, 1600);
+      }
+      function legacyCopy(t){
+        var ta = document.createElement('textarea');
+        ta.value = t; document.body.appendChild(ta); ta.select();
+        try{ document.execCommand('copy'); }catch(e){}
+        document.body.removeChild(ta);
+      }
+      btn.addEventListener('click', function(){
+        var text = btn.getAttribute('data-copy') || '';
+        if(navigator.clipboard && navigator.clipboard.writeText){
+          navigator.clipboard.writeText(text).then(flash, function(){ legacyCopy(text); flash(); });
+        }else{ legacyCopy(text); flash(); }
+      });
     })();
   </script>
 </body>
