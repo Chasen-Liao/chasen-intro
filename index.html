@@ -57,6 +57,9 @@
       --pad-x:clamp(32px,5vw,72px);
       --rail-x:48px;
       --ease:cubic-bezier(.22,.61,.36,1);
+      --spring:cubic-bezier(.16,1,.3,1);
+      --paper-shift-x:0px;
+      --paper-shift-y:0px;
     }
 
     /* ───── 纸张底 + 颗粒纸纹 ───── */
@@ -78,6 +81,7 @@
       position:fixed;inset:0;z-index:1;pointer-events:none;
       opacity:.045;mix-blend-mode:multiply;
       background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      transform:translate3d(var(--paper-shift-x),var(--paper-shift-y),0);
     }
     main{position:relative;z-index:2;}
   </style>
@@ -92,9 +96,14 @@
       padding:0 var(--pad-x);
       border-bottom:1px solid var(--line);
       background:rgba(244,239,230,.82);
-      backdrop-filter:blur(8px);
-      -webkit-backdrop-filter:blur(8px);
+      backdrop-filter:blur(16px) saturate(125%);
+      -webkit-backdrop-filter:blur(16px) saturate(125%);
+      transition:box-shadow .4s var(--ease),background .4s var(--ease);
     }
+    .nav::after{content:"";position:absolute;left:0;right:0;bottom:-12px;height:12px;pointer-events:none;
+      background:linear-gradient(to bottom,rgba(26,23,20,.08),transparent);opacity:0;transition:opacity .4s var(--ease);}
+    body.has-scrolled .nav{box-shadow:0 8px 24px rgba(26,23,20,.06);}
+    body.has-scrolled .nav::after{opacity:.8;}
     .nav__brand{
       font-family:var(--serif);
       font-size:24px;font-weight:600;letter-spacing:-.02em;
@@ -153,14 +162,14 @@
       height:32px;padding:0 4px;border-radius:2px;
       border:1px solid var(--line);background:var(--paper);
       font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:.08em;
-      color:var(--muted);cursor:pointer;transition:all .25s var(--ease);
+      color:var(--muted);cursor:pointer;transition:border-color .25s var(--ease),background .25s var(--ease),color .25s var(--ease);
       margin-left:14px;
     }
     .mode-capsule:hover{border-color:var(--ink);}
     .mode-capsule__opt{
       display:inline-flex;align-items:center;gap:5px;
       padding:0 8px;height:24px;border-radius:1px;
-      transition:all .25s var(--ease);color:var(--muted);
+      transition:background .25s var(--ease),color .25s var(--ease);
     }
     .mode-capsule__opt.is-active{
       background:var(--ink);color:var(--paper);
@@ -183,12 +192,17 @@
 
     /* ───── 左侧韵律线(脊柱)+ 四角准星 ───── */
     .rail{position:fixed;top:0;bottom:0;left:var(--rail-x);z-index:3;pointer-events:none;}
+    .rail__progress{position:absolute;top:calc(var(--nav-h) + 40px);bottom:48px;left:0;width:1px;
+      background:var(--accent);transform-origin:top;transform:scaleY(var(--rail-progress,0));
+      transition:transform .16s linear;box-shadow:0 0 8px rgba(240,101,46,.28);}
     .rail i{position:absolute;top:calc(var(--nav-h) + 40px);bottom:48px;width:1px;background:var(--line);opacity:.7;}
     .rail i:nth-child(1){left:0;}
     .rail i:nth-child(2){left:7px;}
     .rail i:nth-child(3){left:14px;}
 
-    .cross{position:fixed;z-index:3;width:18px;height:18px;pointer-events:none;opacity:.5;}
+    .cross{position:fixed;z-index:3;width:18px;height:18px;pointer-events:none;opacity:.5;
+      transition:opacity .3s var(--ease),transform .3s var(--spring);}
+    .cross.is-pulse{opacity:1;transform:scale(1.35);}
     .cross::before,.cross::after{content:"";position:absolute;background:var(--line);}
     .cross::before{left:8px;top:0;width:1px;height:18px;}
     .cross::after{top:8px;left:0;height:1px;width:18px;}
@@ -200,7 +214,7 @@
     .btn{
       display:inline-flex;align-items:center;gap:12px;
       font-family:var(--sans-cjk);font-size:16px;font-weight:400;
-      transition:all .3s var(--ease);cursor:pointer;border:none;
+      transition:transform .25s var(--spring),background .25s var(--ease),border-color .25s var(--ease),color .25s var(--ease),box-shadow .25s var(--ease);cursor:pointer;border:none;
     }
     .btn .arr{transition:transform .3s var(--ease);}
     .btn:hover .arr{transform:translateX(5px);}
@@ -211,6 +225,8 @@
     .btn--ghost:hover,.btn--ghost:active{
       background:var(--accent);border-color:var(--accent);color:var(--paper);
     }
+    .btn--ghost:hover{transform:translateY(-2px);box-shadow:0 8px 18px rgba(240,101,46,.16);}
+    .btn--ghost:active{transform:translateY(0) scale(.98);box-shadow:none;}
     .btn--ghost:hover .arr,.btn--ghost:active .arr{color:var(--paper);}
 
     /* ───── 键盘焦点环（WCAG 2.4.7 / 1.4.11）───── */
@@ -260,6 +276,13 @@
       *{animation:none !important;transition:none !important;}
       [data-reveal]{opacity:1;transform:none;}
     }
+    @media (prefers-reduced-transparency:reduce){
+      .nav{background:var(--paper);backdrop-filter:none;-webkit-backdrop-filter:none;}
+    }
+    @media (prefers-contrast:more){
+      .nav,.portrait__media,.blueprint{border-color:var(--ink);}
+      .nav{background:var(--paper);backdrop-filter:none;-webkit-backdrop-filter:none;}
+    }
   </style>
 
   <!-- ═══════════ SECTIONS ═══════════ -->
@@ -287,6 +310,7 @@
       font-size:clamp(120px,16vw,280px);
       line-height:.8;letter-spacing:-.02em;
       white-space:nowrap;
+      text-shadow:0 1px 0 rgba(244,239,230,.35);
     }
     .hero__kicker{
       display:flex;align-items:center;gap:11px;
@@ -312,7 +336,7 @@
     .hero__right{display:flex;justify-content:flex-start;align-items:flex-start;}
     .portrait{
       position:relative;flex:none;
-      width:min(60vw,1100px);
+      width:min(60vw,100%);
       aspect-ratio:945/638;
       margin-top:calc(var(--nav-h) - 72px);
       margin-left:clamp(6px,1vw,22px);
@@ -320,11 +344,15 @@
     .portrait__media{
       position:absolute;inset:0;overflow:hidden;
       background:
-        linear-gradient(rgba(201,192,178,.14) 1px,transparent 1px) 0 0/100% 31px,
-        linear-gradient(90deg,rgba(201,192,178,.14) 1px,transparent 1px) 0 0/31px 100%,
+        linear-gradient(rgba(201,192,178,.14) 1px,transparent 1px) var(--grid-x,0px) var(--grid-y,0px)/100% 31px,
+        linear-gradient(90deg,rgba(201,192,178,.14) 1px,transparent 1px) var(--grid-x,0px) var(--grid-y,0px)/31px 100%,
         rgba(26,23,20,.03);
       border:1px solid var(--line);
     }
+    .portrait__media::before{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
+      background:radial-gradient(circle at var(--pointer-x,50%) var(--pointer-y,50%),rgba(240,101,46,.12),transparent 24%);
+      opacity:0;transition:opacity .28s var(--ease);}
+    .portrait__media.is-pointer-active::before{opacity:1;}
     .portrait__img{
       position:absolute;left:50%;top:50%;
       width:min(56%,420px);height:auto;max-width:none;
@@ -414,21 +442,26 @@
       margin-top:clamp(44px,4vw,58px);
       border:1px solid var(--line);
       background:
-        linear-gradient(rgba(201,192,178,.14) 1px,transparent 1px) 0 0/100% 31px,
-        linear-gradient(90deg,rgba(201,192,178,.14) 1px,transparent 1px) 0 0/31px 100%;
+        linear-gradient(rgba(201,192,178,.14) 1px,transparent 1px) var(--grid-x,0px) var(--grid-y,0px)/100% 31px,
+        linear-gradient(90deg,rgba(201,192,178,.14) 1px,transparent 1px) var(--grid-x,0px) var(--grid-y,0px)/31px 100%;
+      overflow:hidden;
     }
+    .blueprint::after{content:"";position:absolute;inset:0;pointer-events:none;
+      background:radial-gradient(circle at var(--pointer-x,50%) var(--pointer-y,50%),rgba(240,101,46,.08),transparent 22%);
+      opacity:0;transition:opacity .35s var(--ease);}
+    .blueprint.is-pointer-active::after{opacity:1;}
     .blueprint__center{
-      position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+      position:absolute;top:50%;left:50%;transform:translate3d(calc(-50% + var(--center-x,0px)),calc(-50% + var(--center-y,0px)),0) rotate(var(--center-rotate,0deg));
       width:46%;aspect-ratio:1;
       border:1px solid rgba(240,101,46,.16);border-radius:50%;
       display:flex;align-items:center;justify-content:center;
       font-family:var(--serif);font-weight:600;
-      font-size:clamp(28px,3vw,48px);color:var(--ink-soft);
+      font-size:clamp(28px,3vw,48px);color:var(--ink-soft);transition:transform .28s var(--spring);
     }
     .blueprint__ring2{
-      position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+      position:absolute;top:50%;left:50%;transform:translate3d(calc(-50% + var(--ring-x,0px)),calc(-50% + var(--ring-y,0px)),0) rotate(var(--ring-rotate,0deg));
       width:62%;aspect-ratio:1;
-      border:1px solid rgba(201,192,178,.4);border-radius:50%;
+      border:1px solid rgba(201,192,178,.4);border-radius:50%;transition:transform .38s var(--spring);
     }
     /* 四角准星 */
     .bp__target{position:absolute;width:17px;height:17px;border-radius:50%;border:1px solid var(--accent);}
@@ -500,6 +533,8 @@
       display:flex;align-items:flex-end;gap:5px;height:30px;
     }
     .skill__bars i{width:8px;border-radius:2px;background:var(--accent);}
+    .skill__bars i{transform:scaleY(var(--bar-scale,1));transform-origin:bottom;transition:transform .26s var(--spring),background .25s var(--ease);}
+    .skill-row:hover .skill__bars i{--bar-scale:1.08;}
     .skill__bars--fade i:nth-child(n+6){background:var(--line);}
     .skill__level{
       font-family:var(--mono);font-size:clamp(12px,.9vw,14px);
@@ -537,7 +572,7 @@
     }
     .work__cat-btn{
       background:none;border:none;font-family:var(--sans-cjk);font-size:14px;
-      color:var(--ink-soft);cursor:pointer;transition:all .25s var(--ease);
+      color:var(--ink-soft);cursor:pointer;transition:color .25s var(--ease),font-weight .25s var(--ease);
       display:inline-flex;align-items:center;gap:6px;padding:4px 2px;
     }
     .work__cat-btn:hover,.work__cat-btn.is-active{
@@ -558,6 +593,7 @@
     }
     .wrow__rule{height:1px;background:var(--line);align-self:center;}
     .wrow:hover{padding-left:10px;}
+    .wrow:active{background:rgba(240,101,46,.08);}
     .wrow__idx{font-family:var(--serif);font-size:30px;color:#9a9082;}
     .wrow__body{min-width:0;}
     .wrow__meta-row{display:flex;align-items:center;gap:14px;margin-bottom:8px;flex-wrap:wrap;}
@@ -668,6 +704,7 @@
       mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent);
     }
     .marquee__track{display:flex;width:max-content;animation:marquee 36s linear infinite;}
+    .contact__marquee:hover .marquee__track{animation-play-state:paused;}
     .marquee__set{
       font-family:var(--serif-cjk);font-size:18px;color:var(--muted);
       letter-spacing:.06em;white-space:nowrap;flex:none;
@@ -738,6 +775,12 @@
     .to-top:hover .arr{transform:translateY(-3px);}
 
     /* ═══════════ 响应式 ═══════════ */
+    @media (max-width:1120px) and (min-width:861px){
+      .hero{grid-template-columns:minmax(0,44%) minmax(0,56%);}
+      .hero__wordmark{font-size:clamp(96px,13vw,180px);}
+      .hero__kicker{font-size:14px;}
+      .portrait{width:min(60vw,100%);margin-left:0;}
+    }
     @media (max-width:860px){
       :root{--pad-x:20px;--rail-x:20px;}
       .rail,.cross{display:none;}
@@ -793,6 +836,12 @@
     }
 
     @media (max-width:600px){
+      .nav{padding:0 12px;}
+      .nav__brand{font-size:18px;}
+      .nav__links{flex:1;min-width:0;justify-content:flex-end;gap:3px;}
+      .nav__links a{min-width:32px;font-size:9px;letter-spacing:.04em;}
+      .mode-capsule{height:26px;padding:0 2px;margin-left:2px;font-size:8px;flex:none;}
+      .mode-capsule__opt{padding:0 4px;height:20px;}
       .hero{
         min-height:100svh;
         padding:calc(var(--nav-h) + 22px) var(--pad-x) 48px;
@@ -836,7 +885,7 @@
 <body data-mode="resume">
 
   <!-- 左脊柱 + 四角准星 -->
-  <div class="rail"><i></i><i></i><i></i></div>
+  <div class="rail" data-scroll-progress><span class="rail__progress"></span><i></i><i></i><i></i></div>
   <div class="cross cross--tr"></div>
   <div class="cross cross--bl"></div>
   <div class="cross cross--br"></div>
@@ -923,7 +972,7 @@
         </div>
 
         <!-- 工程蓝图档案卡 -->
-        <div class="blueprint" data-reveal>
+        <div class="blueprint" data-reveal data-blueprint>
           <div class="blueprint__ring2"></div>
           <div class="blueprint__center">C.</div>
           <div class="bp__target bp__target--tl"></div>
@@ -1293,6 +1342,8 @@
       var toggles = document.querySelectorAll('[data-mode-toggle]');
       var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       var transitionRunning = false;
+      var cancelModeBurst = null;
+      var pendingMode = null;
 
       function normalizeMode(value){
         return value === 'social' ? 'social' : 'resume';
@@ -1300,6 +1351,7 @@
 
       function commitMode(mode){
         mode = normalizeMode(mode);
+        pendingMode = mode;
         body.setAttribute('data-mode', mode);
         body.classList.remove('is-mode-switching');
         toggles.forEach(function(toggle){
@@ -1424,6 +1476,16 @@
         var switchAt = 330;
         var start = performance.now();
         var switched = false;
+        var frameId = 0;
+        var cancelled = false;
+
+        cancelModeBurst = function(){
+          cancelled = true;
+          if(frameId) cancelAnimationFrame(frameId);
+          canvas.remove();
+          transitionRunning = false;
+          cancelModeBurst = null;
+        };
 
         function resize(){
           canvas.width = Math.round(window.innerWidth * dpr);
@@ -1435,6 +1497,7 @@
         resize();
 
         function frame(now){
+          if(cancelled) return;
           var elapsed = now - start;
           if(!switched && elapsed >= switchAt){
             switched = true;
@@ -1463,21 +1526,26 @@
           });
           ctx.globalAlpha = 1;
           if(elapsed < duration + 120){
-            requestAnimationFrame(frame);
+            frameId = requestAnimationFrame(frame);
           }else{
             if(!switched) commitMode(nextMode);
             canvas.remove();
             transitionRunning = false;
+            cancelModeBurst = null;
             if(done) done();
           }
         }
-        requestAnimationFrame(frame);
+        frameId = requestAnimationFrame(frame);
       }
 
       function setMode(mode, animate){
         mode = normalizeMode(mode);
+        pendingMode = mode;
         if(animate && !reduceMotion){
-          if(transitionRunning) return;
+          if(cancelModeBurst){
+            cancelModeBurst();
+            commitMode(mode);
+          }
           transitionRunning = true;
           body.classList.add('is-mode-switching');
           runModeBurstTransition(mode, function(){
@@ -1494,7 +1562,8 @@
 
       toggles.forEach(function(toggle){
         toggle.addEventListener('click', function(){
-          var next = body.getAttribute('data-mode') === 'social' ? 'resume' : 'social';
+          var current = pendingMode || body.getAttribute('data-mode');
+          var next = current === 'social' ? 'resume' : 'social';
           setMode(next, true);
         });
       });
@@ -1505,6 +1574,7 @@
       function applyFilter(filterVal){
         document.querySelectorAll('.work__cat-btn').forEach(function(btn){
           btn.classList.toggle('is-active', btn.getAttribute('data-filter') === filterVal);
+          btn.setAttribute('aria-pressed', btn.getAttribute('data-filter') === filterVal ? 'true' : 'false');
         });
         document.querySelectorAll('.wrow').forEach(function(row){
           var cats = row.getAttribute('data-cats') || '全部';
@@ -1512,6 +1582,9 @@
           row.classList.toggle('is-filtered-out', !match);
         });
       }
+      document.querySelectorAll('.work__cat-btn').forEach(function(btn){
+        btn.setAttribute('aria-pressed', btn.classList.contains('is-active') ? 'true' : 'false');
+      });
       document.querySelectorAll('.work__cat-btn').forEach(function(btn){
         btn.addEventListener('click', function(){
           applyFilter(btn.getAttribute('data-filter') || '全部');
@@ -1543,6 +1616,13 @@
       entries.forEach(function(entry){
         if(entry.isIntersecting){
           var id = entry.target.id;
+          document.body.setAttribute('data-active-section', id);
+          document.querySelectorAll('.cross').forEach(function(cross){
+            cross.classList.remove('is-pulse');
+            void cross.offsetWidth;
+            cross.classList.add('is-pulse');
+            window.setTimeout(function(){ cross.classList.remove('is-pulse'); }, 540);
+          });
           navLinks.forEach(function(link){
             var isActive = link.getAttribute('data-nav') === id;
             link.classList.toggle('is-active', isActive);
@@ -1556,6 +1636,68 @@
       });
     }, {rootMargin:'-40% 0px -55% 0px'});
     sections.forEach(function(s){ io.observe(s); });
+
+    // 纸张 / 左侧轨道：滚动和指针只改变低成本的 transform 变量。
+    (function initAmbientSystem(){
+      var root = document.documentElement;
+      var rail = document.querySelector('[data-scroll-progress]');
+      var raf = 0;
+      function updateScrollState(){
+        raf = 0;
+        var maxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+        var progress = Math.max(0, Math.min(1, window.pageYOffset / maxScroll));
+        if(rail) rail.style.setProperty('--rail-progress', progress.toFixed(4));
+        document.body.classList.toggle('has-scrolled', window.pageYOffset > 12);
+        root.style.setProperty('--paper-shift-y', (Math.sin(window.pageYOffset * .0012) * .8).toFixed(2) + 'px');
+      }
+      function scheduleScroll(){ if(!raf) raf = requestAnimationFrame(updateScrollState); }
+      window.addEventListener('scroll', scheduleScroll, {passive:true});
+      window.addEventListener('resize', scheduleScroll, {passive:true});
+      window.addEventListener('pointermove', function(e){
+        var x = ((e.clientX / window.innerWidth) - .5) * 1.6;
+        var y = ((e.clientY / window.innerHeight) - .5) * 1.2;
+        root.style.setProperty('--paper-shift-x', x.toFixed(2) + 'px');
+        root.style.setProperty('--paper-shift-y', y.toFixed(2) + 'px');
+      }, {passive:true});
+      updateScrollState();
+    })();
+
+    // 蓝图圆环：让准星、网格和圆环共享同一个指针坐标系。
+    (function initBlueprintPointer(){
+      var blueprint = document.querySelector('[data-blueprint]');
+      if(!blueprint) return;
+      function reset(){
+        blueprint.classList.remove('is-pointer-active');
+        blueprint.style.setProperty('--pointer-x','50%');
+        blueprint.style.setProperty('--pointer-y','50%');
+        blueprint.style.setProperty('--grid-x','0px');
+        blueprint.style.setProperty('--grid-y','0px');
+        blueprint.style.setProperty('--ring-x','0px');
+        blueprint.style.setProperty('--ring-y','0px');
+        blueprint.style.setProperty('--ring-rotate','0deg');
+        blueprint.style.setProperty('--center-x','0px');
+        blueprint.style.setProperty('--center-y','0px');
+        blueprint.style.setProperty('--center-rotate','0deg');
+      }
+      blueprint.addEventListener('pointermove', function(e){
+        var rect = blueprint.getBoundingClientRect();
+        var nx = (e.clientX - rect.left) / rect.width - .5;
+        var ny = (e.clientY - rect.top) / rect.height - .5;
+        blueprint.classList.add('is-pointer-active');
+        blueprint.style.setProperty('--pointer-x', ((nx + .5) * 100).toFixed(2) + '%');
+        blueprint.style.setProperty('--pointer-y', ((ny + .5) * 100).toFixed(2) + '%');
+        blueprint.style.setProperty('--grid-x', (nx * 8).toFixed(2) + 'px');
+        blueprint.style.setProperty('--grid-y', (ny * 8).toFixed(2) + 'px');
+        blueprint.style.setProperty('--ring-x', (nx * 9).toFixed(2) + 'px');
+        blueprint.style.setProperty('--ring-y', (ny * 9).toFixed(2) + 'px');
+        blueprint.style.setProperty('--ring-rotate', (nx * 2.4).toFixed(2) + 'deg');
+        blueprint.style.setProperty('--center-x', (nx * -4).toFixed(2) + 'px');
+        blueprint.style.setProperty('--center-y', (ny * -4).toFixed(2) + 'px');
+        blueprint.style.setProperty('--center-rotate', (nx * -1.2).toFixed(2) + 'deg');
+      });
+      blueprint.addEventListener('pointerleave', reset);
+      reset();
+    })();
 
     // 入场动画：JS 只切 class，timing/easing 全在 CSS
     function revealElement(el){
@@ -1771,8 +1913,23 @@
           mouse.x = e.clientX - rect.left;
           mouse.y = e.clientY - rect.top;
           mouse.on = true;
+          var mediaRect = media.getBoundingClientRect();
+          var nx = (e.clientX - mediaRect.left) / mediaRect.width - .5;
+          var ny = (e.clientY - mediaRect.top) / mediaRect.height - .5;
+          media.classList.add('is-pointer-active');
+          media.style.setProperty('--pointer-x', ((nx + .5) * 100).toFixed(2) + '%');
+          media.style.setProperty('--pointer-y', ((ny + .5) * 100).toFixed(2) + '%');
+          media.style.setProperty('--grid-x', (nx * 7).toFixed(2) + 'px');
+          media.style.setProperty('--grid-y', (ny * 7).toFixed(2) + 'px');
         });
-        media.addEventListener('pointerleave', function(){ mouse.on = false; });
+        media.addEventListener('pointerleave', function(){
+          mouse.on = false;
+          media.classList.remove('is-pointer-active');
+          media.style.setProperty('--pointer-x','50%');
+          media.style.setProperty('--pointer-y','50%');
+          media.style.setProperty('--grid-x','0px');
+          media.style.setProperty('--grid-y','0px');
+        });
         window.addEventListener('resize', function(){
           measure();
           layoutParticles(false);
