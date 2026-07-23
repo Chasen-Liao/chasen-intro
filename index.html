@@ -9,7 +9,7 @@
   <meta property="og:title" content="Chasen-Liao — CS @ GDUFE × AI Agent / RAG Builder" />
   <meta property="og:description" content="Chasen-Liao — 广东财经大学计算机科学在读，专注 AI Agent / RAG 与前端工程化。用真实项目探索 LLM 应用边界。" />
   <meta property="og:url" content="https://chasen-intro.vercel.app" />
-  <meta property="og:image" content="https://chasen-intro.vercel.app/assets/头像_400x400.jpg" />
+  <meta property="og:image" content="https://chasen-intro.vercel.app/assets/chasen-avatar-smile.png" />
   <meta name="twitter:card" content="summary_large_image" />
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 
@@ -53,9 +53,9 @@
       --sans-cjk:'Noto Sans SC','Inter',sans-serif;
       --mono:ui-monospace,'SF Mono','Menlo','Roboto Mono',monospace;
 
-      --nav-h:78px;
-      --pad-x:clamp(32px,5vw,72px);
-      --rail-x:48px;
+      --nav-h:100px;
+      --pad-x:clamp(32px,5vw,80px);
+      --rail-x:52px;
       --ease:cubic-bezier(.22,.61,.36,1);
       --spring:cubic-bezier(.16,1,.3,1);
       --paper-shift-x:0px;
@@ -290,24 +290,24 @@
     /* ═══════════ HERO ═══════════ */
     .hero{
       min-height:100vh;
-      padding:0 var(--pad-x) 0 calc(var(--rail-x) + 56px);
+      padding:0 var(--pad-x) 0 calc(var(--rail-x) + 82px);
       display:grid;
-      grid-template-columns:minmax(0,38%) minmax(0,62%);
+      grid-template-columns:minmax(0,40.6%) minmax(0,59.4%);
       align-items:stretch;
       gap:0;
       overflow:hidden;
     }
     .hero__left{
       display:flex;flex-direction:column;justify-content:flex-start;
-      padding:calc(var(--nav-h) + 7vh) 0 6vh;
+      padding:calc(var(--nav-h) + 9vh) 0 6vh;
       max-width:760px;
       position:relative;z-index:4;
     }
-    .hero__lower{margin-top:clamp(34px,4.8vh,66px);margin-left:clamp(8px,1.2vw,22px);}
+    .hero__lower{margin-top:60px;margin-left:0;}
     .hero__wordmark{
       font-family:var(--serif);
       font-weight:500;
-      font-size:clamp(120px,16vw,280px);
+      font-size:clamp(120px,14.6vw,280px);
       line-height:.8;letter-spacing:-.02em;
       white-space:nowrap;
       text-shadow:0 1px 0 rgba(244,239,230,.35);
@@ -315,7 +315,7 @@
     .hero__kicker{
       display:flex;align-items:center;gap:11px;
       font-size:clamp(14px,1vw,18px);letter-spacing:.05em;color:var(--accent);
-      margin-bottom:28px;font-weight:500;
+      margin-bottom:40px;font-weight:500;
     }
     .hero__kicker > span{display:flex;align-items:center;gap:11px;}
     .hero__kicker .dot{width:10px;height:10px;border-radius:50%;background:var(--accent);flex:none;
@@ -323,23 +323,23 @@
     .hero__slogan{
       font-family:var(--sans-cjk);font-weight:300;
       font-size:clamp(20px,1.7vw,30px);line-height:1.6;
-      color:var(--ink);margin-bottom:32px;
+      color:var(--ink);max-width:520px;margin-bottom:46px;
     }
     .hero__slogan em{font-style:normal;color:var(--accent);font-weight:400;}
     .hero__cta{
       display:flex;align-items:stretch;gap:24px;
-      width:min(100%,390px);flex-wrap:nowrap;
+      width:min(100%,480px);flex-wrap:nowrap;
     }
-    .hero__cta .btn{flex:1 1 0;height:58px;padding:0 22px;justify-content:center;}
+    .hero__cta .btn{flex:1 1 0;height:72px;padding:0 22px;justify-content:center;}
 
     /* 右栏：头像占位区（蓝图风格） */
-    .hero__right{display:flex;justify-content:flex-start;align-items:flex-start;}
+    .hero__right{display:flex;justify-content:flex-start;align-items:flex-start;min-height:100svh;padding:calc(var(--nav-h) + 28px) 0 8vh;}
     .portrait{
       position:relative;flex:none;
-      width:min(60vw,100%);
-      aspect-ratio:945/638;
-      margin-top:calc(var(--nav-h) - 72px);
-      margin-left:clamp(6px,1vw,22px);
+      width:100%;
+      min-height:calc(100svh - var(--nav-h) - 28px - 8vh);
+      aspect-ratio:auto;
+      margin:0;
     }
     .portrait__media{
       position:absolute;inset:0;overflow:hidden;
@@ -354,14 +354,14 @@
       opacity:0;transition:opacity .28s var(--ease);}
     .portrait__media.is-pointer-active::before{opacity:1;}
     .portrait__img{
-      position:absolute;left:50%;top:50%;
-      width:min(56%,420px);height:auto;max-width:none;
+      position:absolute;left:53%;top:50%;
+      width:min(82%,720px);height:auto;max-width:none;
       transform:translate(-50%,-50%) scale(1.02);
-      opacity:.2;mix-blend-mode:multiply;
-      filter:saturate(.72) contrast(1.08) brightness(.94);
+      opacity:.12;mix-blend-mode:multiply;
+      filter:saturate(.72) contrast(1.04) brightness(.98);
       transition:opacity .45s var(--ease),filter .45s var(--ease);
     }
-    .portrait.is-base-visible .portrait__img{opacity:.42;filter:saturate(.92) contrast(1.12) brightness(.98);}
+    .portrait.is-base-visible .portrait__img{opacity:.72;filter:saturate(.88) contrast(1.06) brightness(.99);}
     .portrait__particles{
       position:absolute;z-index:3;pointer-events:none;
     }
@@ -779,7 +779,7 @@
       .hero{grid-template-columns:minmax(0,44%) minmax(0,56%);}
       .hero__wordmark{font-size:clamp(96px,13vw,180px);}
       .hero__kicker{font-size:14px;}
-      .portrait{width:min(60vw,100%);margin-left:0;}
+      .portrait{width:100%;margin-left:0;}
     }
     @media (max-width:860px){
       :root{--pad-x:20px;--rail-x:20px;}
@@ -800,8 +800,9 @@
       .hero__left{padding:0 0 4vh;max-width:none;}
       .hero__wordmark{font-size:clamp(80px,22vw,120px);}
       .hero__lower{margin-left:0;margin-top:24px;}
-      .hero__right{order:-1;}
-      .portrait{width:min(76vw,420px);margin-left:0;margin-top:0;}
+      .hero__right{order:-1;padding:0;min-height:0;}
+      .portrait{width:min(76vw,420px);min-height:0;aspect-ratio:945/638;margin:0;}
+      .portrait__img{width:58%;left:50%;top:50%;}
 
       .about{
         grid-template-columns:1fr;
@@ -882,7 +883,7 @@
 
   <noscript><style>[data-reveal]{opacity:1 !important;transform:none !important;}</style></noscript>
 </head>
-<body data-mode="resume">
+<body data-mode="social">
 
   <!-- 左脊柱 + 四角准星 -->
   <div class="rail" data-scroll-progress><span class="rail__progress"></span><i></i><i></i><i></i></div>
@@ -903,9 +904,9 @@
       <a href="#contact" data-nav="contact">联系</a>
       <span class="nav__stat"><i></i>开放机会</span>
       <button class="mode-capsule" type="button" data-mode-toggle aria-label="切换简历/社交模式">
-        <span class="mode-capsule__opt is-active" data-capsule="resume"><i class="mode-capsule__dot"></i>RESUME</span>
+        <span class="mode-capsule__opt" data-capsule="resume"><i class="mode-capsule__dot"></i>RESUME</span>
         <span class="mode-capsule__sep">/</span>
-        <span class="mode-capsule__opt" data-capsule="social"><i class="mode-capsule__dot"></i>SOCIAL</span>
+        <span class="mode-capsule__opt is-active" data-capsule="social"><i class="mode-capsule__dot"></i>SOCIAL</span>
       </button>
     </div>
   </nav>
@@ -918,7 +919,7 @@
         <div data-reveal>
           <div class="hero__kicker" data-mode-copy>
             <span data-resume><span class="dot"></span>CS UNDERGRAD × AI / FRONT-END BUILDER</span>
-            <span data-social><span class="dot"></span>AI Agent / Claude Code / Build in public</span>
+            <span data-social><span class="dot"></span>AI 原住民 × VIBE CODING / AGENT BUILDER</span>
           </div>
           <h1 class="hero__wordmark">Chasen</h1>
         </div>
@@ -928,19 +929,23 @@
             用真实项目探索 LLM 应用边界，从 Agentic RAG 到桌面客户端。
           </p>
           <p class="hero__slogan" data-mode-copy data-social>
-            每天用 Claude Code、OpenDesign 与 LangGraph 把想法 build 成可运行的东西。<br>
-            记录 AI Agent、RAG、vibecoding 与个人工具链的实战过程。
+            持续追逐前沿 AI Coding 工具，把想法 build 成真实产品。<br>
+            分享 Claude Code 使用技巧、AI 前沿动态与 Vibe Coding 实战工作流。
           </p>
-          <div class="hero__cta">
+          <div class="hero__cta" data-mode-copy data-resume>
             <a class="btn btn--ghost" href="#work" data-nav="work">查看作品 <span class="arr">→</span></a>
             <a class="btn btn--ghost" href="#contact" data-nav="contact">联系我 <span class="arr">→</span></a>
+          </div>
+          <div class="hero__cta" data-mode-copy data-social>
+            <a class="btn btn--ghost" href="https://x.com/chasen_liao" target="_blank" rel="noopener noreferrer">关注 X <span class="arr">→</span></a>
+            <a class="btn btn--ghost" href="#work" data-nav="work">浏览构建记录 <span class="arr">→</span></a>
           </div>
         </div>
       </div>
       <div class="hero__right" data-reveal>
         <div class="portrait" data-portrait>
           <div class="portrait__media">
-            <img class="portrait__img" src="assets/头像_400x400.jpg" alt="Chasen 头像" decoding="async" />
+            <img class="portrait__img" src="assets/chasen-avatar-smile.png" alt="Chasen 个人 IP 头像" decoding="async" />
             <div class="portrait__monogram" aria-hidden="true">C.</div>
             <div class="portrait__label">
               <b>SUBJECT // CHASEN-LIAO</b><br>
@@ -966,9 +971,9 @@
           <p>目前正在寻找<em style="color:var(--accent);font-style:normal;">AI Agent 工程师 | AIGC 工程师</em>方向的机会，愿意在 Agent 工程链路、RAG 系统、AIGC 应用到前端工程化全链路投入。</p>
         </div>
         <div class="about__bio" data-reveal data-mode-copy data-social>
-          <p>我是 Chasen，长期折腾 Claude Code、Agentic RAG、桌面客户端与个人效率工具。我的内容围绕一个问题：普通开发者如何用 AI 把想法更快地变成真实产品。</p>
-          <p>我会记录从 prompt、设计、检索、记忆架构到前端交互的完整过程，也会把踩坑、评测、工具链和可复用方法写成随笔或开源项目。</p>
-          <p>这里不是教程集合，而是一个持续迭代的 build log：用真实项目验证 AI 的边界，再把经验沉淀给下一次构建。</p>
+          <p>我是 Chasen，一名 AI 原住民和 Vibe Coding / AI Agent 实战玩家。比起只讨论概念，我更喜欢把新工具放进真实项目里，用能运行的结果验证它。</p>
+          <p>我在 X 上持续分享 Claude Code、Codex 与 Agent 工作流：从工具体验、提示词和多 Agent 协作，到项目如何从一句想法走到可运行版本。</p>
+          <p>这里是一份持续更新的 build log，也是一张 AI Coding 实践地图。记录有效的方法、真实的踩坑和正在发生的前沿变化——一起不停追逐。</p>
         </div>
 
         <!-- 工程蓝图档案卡 -->
@@ -1023,8 +1028,8 @@
           </div>
           <div class="bp__anno bp__anno--est">
             <div class="bp__lead">2024 — NOW <span class="bp__sq"></span></div>
-            <div class="bp__mono bp__mono--key">51 REPOS · ⌀</div>
-            <div class="bp__mono">87 FOLLOWERS</div>
+            <div class="bp__mono bp__mono--key" data-github-repos-label>52 REPOS · ⌀</div>
+            <div class="bp__mono" data-github-followers-label>88 FOLLOWERS</div>
             <div class="bp__mono">OPEN TO INTERN</div>
           </div>
           <div class="bp__coords">N 23°08′&nbsp;&nbsp;&nbsp;E 113°15′&nbsp;&nbsp;·&nbsp;&nbsp;GUANGZHOU&nbsp;&nbsp;·&nbsp;&nbsp;ID // CHASEN-LIAO</div>
@@ -1039,6 +1044,18 @@
             <div class="signal__legend" data-mode-copy><span data-resume>DEPTH · <b>●</b> ACTIVE</span><span data-social>BUILD LOG · <b>●</b> LIVE</span></div>
           </div>
           <ul class="signal__list">
+            <li class="skill-row">
+              <div class="skill__name">Claude Code <em>daily</em></div>
+              <div class="skill__bars"><i style="height:38%"></i><i style="height:52%"></i><i style="height:66%"></i><i style="height:78%"></i><i style="height:90%"></i><i style="height:96%"></i><i style="height:92%"></i></div>
+              <div class="skill__level">CORE</div>
+              <div class="skill__years">DAILY</div>
+            </li>
+            <li class="skill-row">
+              <div class="skill__name">OpenAI Codex <em>agent</em></div>
+              <div class="skill__bars"><i style="height:34%"></i><i style="height:48%"></i><i style="height:62%"></i><i style="height:74%"></i><i style="height:86%"></i><i style="height:92%"></i><i style="height:88%"></i></div>
+              <div class="skill__level">ACTIVE</div>
+              <div class="skill__years">DAILY</div>
+            </li>
             <li class="skill-row">
               <div class="skill__name">Python <em>core</em></div>
               <div class="skill__bars"><i style="height:32%"></i><i style="height:44%"></i><i style="height:56%"></i><i style="height:68%"></i><i style="height:80%"></i><i style="height:90%"></i><i style="height:88%"></i></div>
@@ -1139,7 +1156,7 @@
             <span class="wrow__chip">Electron</span>
             <span class="wrow__chip">React</span>
           </div>
-          <div class="wrow__thumb"><div class="wrow__thumb-ph">⭐ 19 · PI / DESKTOP</div></div>
+          <div class="wrow__thumb"><div class="wrow__thumb-ph" data-github-stars="pi-agent-desktop">⭐ 20 · PI / DESKTOP</div></div>
           <div class="wrow__arr">→</div>
         </a>
 
@@ -1159,7 +1176,7 @@
             <span class="wrow__chip">Milvus</span>
             <span class="wrow__chip">FastAPI</span>
           </div>
-          <div class="wrow__thumb"><div class="wrow__thumb-ph">⭐ 3 · RAG / MEMORY</div></div>
+          <div class="wrow__thumb"><div class="wrow__thumb-ph" data-github-stars="SuperMew">⭐ 3 · RAG / MEMORY</div></div>
           <div class="wrow__arr">→</div>
         </a>
 
@@ -1178,7 +1195,7 @@
             <span class="wrow__chip">Claude Plugin</span>
             <span class="wrow__chip">HTML</span>
           </div>
-          <div class="wrow__thumb"><div class="wrow__thumb-ph">⭐ 3 · RESUME / JD</div></div>
+          <div class="wrow__thumb"><div class="wrow__thumb-ph" data-github-stars="resume-skills">⭐ 10 · RESUME / JD</div></div>
           <div class="wrow__arr">→</div>
         </a>
 
@@ -1197,12 +1214,12 @@
             <span class="wrow__chip">Markdown</span>
             <span class="wrow__chip">Docs</span>
           </div>
-          <div class="wrow__thumb"><div class="wrow__thumb-ph">⭐ 12 · ECC / GUIDE</div></div>
+          <div class="wrow__thumb"><div class="wrow__thumb-ph" data-github-stars="Everything-claude-code-Doc">⭐ 12 · ECC / GUIDE</div></div>
           <div class="wrow__arr">→</div>
         </a>
       </div>
 
-      <a class="work__all" href="#contact">完整作品集 <span class="arr">→</span></a>
+      <a class="work__all" href="https://github.com/Chasen-Liao" target="_blank" rel="noopener noreferrer">完整作品集 <span class="arr">→</span></a>
     </section>
 
     <!-- ═══════════ 04 CONTACT ═══════════ -->
@@ -1216,12 +1233,12 @@
           <span class="contact__underline"></span>
         </h2>
         <p class="contact__sub" data-reveal data-mode-copy data-resume>聊聊 AI Agent、RAG 系统，或者一起搞点事情。</p>
-        <p class="contact__sub" data-reveal data-mode-copy data-social>聊聊 Claude Code、AI 工具链，或者交换一次 build log。</p>
+        <p class="contact__sub" data-reveal data-mode-copy data-social>在 X 上聊 AI Coding、Agent 工作流，或者交换一次真实 build log。</p>
         <div class="contact__status" data-reveal data-mode-copy data-resume>
           <span class="pulse"></span>当前开放机会 · Available for AI Agent / AIGC Engineer
         </div>
         <div class="contact__status" data-reveal data-mode-copy data-social>
-          <span class="pulse"></span>持续构建中 · Build in public
+          <span class="pulse"></span>X 持续更新中 · @chasen_liao
         </div>
       </div>
 
@@ -1301,7 +1318,7 @@
           </div>
           <div class="cbar__info">
             <div class="cbar__lbl">GITHUB</div>
-            <div class="cbar__val" style="margin-top:8px;">@Chasen-Liao <em>51 repos · 87 followers</em></div>
+            <div class="cbar__val" style="margin-top:8px;">@Chasen-Liao <em data-github-profile-label>52 repos · 88 followers</em></div>
           </div>
           <span class="cbar__arr">→</span>
         </a>
@@ -1311,7 +1328,7 @@
           </div>
           <div class="cbar__info">
             <div class="cbar__lbl">X / TWITTER</div>
-            <div class="cbar__val" style="margin-top:8px;">@chasen_liao <em>动态 / build log</em></div>
+            <div class="cbar__val" style="margin-top:8px;">@chasen_liao <em data-x-followers="1120">1,120 followers · build log</em></div>
           </div>
           <span class="cbar__arr">→</span>
         </a>
@@ -1337,7 +1354,6 @@
 
   <script>
     (function initModeToggle(){
-      var storageKey = 'chasen-site-mode';
       var body = document.body;
       var toggles = document.querySelectorAll('[data-mode-toggle]');
       var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -1362,7 +1378,6 @@
           opt.classList.toggle('is-active', isCurrent);
         });
         if(window.resetWorkFilter) window.resetWorkFilter();
-        try{ localStorage.setItem(storageKey, mode); }catch(e){}
       }
 
       function collectBurstParticles(){
@@ -1556,8 +1571,7 @@
         }
       }
 
-      var savedMode = 'resume';
-      try{ savedMode = normalizeMode(localStorage.getItem(storageKey)); }catch(e){}
+      var savedMode = 'social';
       setMode(savedMode, false);
 
       toggles.forEach(function(toggle){
@@ -1566,6 +1580,40 @@
           var next = current === 'social' ? 'resume' : 'social';
           setMode(next, true);
         });
+      });
+    })();
+
+    // 每次页面加载从 GitHub 官方 API 刷新公开数据；失败时保留 HTML 中的已验证快照。
+    (function syncGithubStats(){
+      function readJson(response){
+        if(!response.ok) throw new Error('GitHub API unavailable');
+        return response.json();
+      }
+
+      var userRequest = fetch('https://api.github.com/users/Chasen-Liao',{cache:'no-store',headers:{Accept:'application/vnd.github+json'}}).then(readJson);
+      var reposRequest = fetch('https://api.github.com/users/Chasen-Liao/repos?per_page=100',{cache:'no-store',headers:{Accept:'application/vnd.github+json'}}).then(readJson);
+
+      Promise.all([userRequest,reposRequest]).then(function(results){
+        var user = results[0];
+        var repos = results[1];
+        var reposByName = {};
+        repos.forEach(function(repo){ reposByName[repo.name] = repo; });
+
+        document.querySelectorAll('[data-github-repos-label]').forEach(function(el){
+          el.textContent = user.public_repos + ' REPOS · ⌀';
+        });
+        document.querySelectorAll('[data-github-followers-label]').forEach(function(el){
+          el.textContent = user.followers + ' FOLLOWERS';
+        });
+        document.querySelectorAll('[data-github-profile-label]').forEach(function(el){
+          el.textContent = user.public_repos + ' repos · ' + user.followers + ' followers';
+        });
+        document.querySelectorAll('[data-github-stars]').forEach(function(el){
+          var repo = reposByName[el.getAttribute('data-github-stars')];
+          if(repo) el.textContent = el.textContent.replace(/^⭐\s*\d+/, '⭐ ' + repo.stargazers_count);
+        });
+      }).catch(function(){
+        /* Keep the verified static snapshot. */
       });
     })();
 
@@ -1725,7 +1773,20 @@
       if(!portrait) return;
       var media = portrait.querySelector('.portrait__media');
       var img = portrait.querySelector('.portrait__img');
+      var interactionArea = portrait.closest('.hero__right') || portrait;
+      var interaction = portrait.closest('.hero') || interactionArea;
       if(!media || !img) return;
+
+      function pointInsideRect(rect,x,y){
+        return x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom;
+      }
+
+      function normalizePoint(rect,x,y){
+        return {
+          x:Math.max(0, Math.min(1, (x - rect.left) / rect.width)),
+          y:Math.max(0, Math.min(1, (y - rect.top) / rect.height))
+        };
+      }
 
       var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       if(reduceMotion){
@@ -1746,19 +1807,17 @@
         var startTime = performance.now();
         var dpr = Math.min(window.devicePixelRatio || 1, 2);
         var box = {w:0,h:0,ext:0,canvasW:0};
-        var settleMs = 1500;
-        var baseRevealMs = 1850;
+        var settleMs = 2100;
+        var baseRevealMs = 1650;
 
         function colorFor(r,g,b){
-          var max = Math.max(r,g,b), min = Math.min(r,g,b);
-          var light = (max + min) / 2;
-          var sat = max - min;
-          if(r >= g && g >= b && sat > 26 && r > 70){
-            var warm = Math.max(.82, Math.min(1.12, light / 132));
-            return [Math.min(255, 238 * warm) | 0, Math.min(255, 78 * warm) | 0, Math.min(255, 28 * warm) | 0];
-          }
-          var ink = Math.max(.72, Math.min(1.12, light / 76));
-          return [(18 * ink) | 0, (15 * ink) | 0, (13 * ink) | 0];
+          return [r,g,b];
+        }
+
+        function particleKind(r,g,b){
+          if(g > 150 && b > 160 && b > r + 20 && g > r + 10) return 'cyan';
+          if(r > 185 && r > g + 25 && b > g + 5) return 'pink';
+          return 'base';
         }
 
         function isBackground(r,g,b,a){
@@ -1787,14 +1846,14 @@
         }
 
         function sample(){
-          var sourceSize = Math.min(window.innerWidth < 700 ? 170 : 210, img.naturalWidth);
+          var sourceSize = Math.min(window.innerWidth < 700 ? 180 : 240, img.naturalWidth);
           var off = document.createElement('canvas');
           off.width = sourceSize;
           off.height = sourceSize;
           var offCtx = off.getContext('2d', {willReadFrequently:true});
           offCtx.drawImage(img, 0, 0, sourceSize, sourceSize);
           var data = offCtx.getImageData(0, 0, sourceSize, sourceSize).data;
-          var targetCount = window.innerWidth < 700 ? 2400 : 5200;
+          var targetCount = window.innerWidth < 700 ? 2600 : 6400;
           var step = Math.max(2, Math.round(sourceSize / Math.sqrt(targetCount)));
           particles = [];
 
@@ -1804,14 +1863,16 @@
               var r = data[idx], g = data[idx + 1], b = data[idx + 2], a = data[idx + 3];
               if(isBackground(r,g,b,a)) continue;
               var c = colorFor(r,g,b);
+              var kind = particleKind(r,g,b);
+              if(kind === 'pink' && Math.random() > .62) continue;
               var nx = x / sourceSize;
               var ny = y / sourceSize;
               particles.push({
-                nx:nx, ny:ny, r:c[0], g:c[1], b:c[2],
+                nx:nx, ny:ny, r:c[0], g:c[1], b:c[2], kind:kind,
                 tx:0, ty:0, sx:0, sy:0,
-                drift:Math.max(0, (.13 - nx) / .13),
+                drift:kind === 'cyan' ? .72 : Math.max(0, (.13 - nx) / .13),
                 life:Math.random(),
-                size:.85 + Math.random() * 1.2,
+                size:(kind === 'cyan' ? 1.05 : .78) + Math.random() * 1.12,
                 delay:nx * 640 + Math.random() * 240,
                 dur:760 + Math.random() * 460,
                 phase:Math.random() * Math.PI * 2
@@ -1822,10 +1883,14 @@
         }
 
         function layoutParticles(resetStart){
-          var imgW = Math.min(box.w * (window.innerWidth < 600 ? .68 : .56), 420);
+          var imgRatio = window.innerWidth < 600 ? .68 : window.innerWidth <= 860 ? .58 : .82;
+          var imgMax = window.innerWidth <= 860 ? 440 : 720;
+          var imgW = Math.min(box.w * imgRatio, imgMax);
           var imgH = imgW;
-          var left = (box.w - imgW) / 2;
-          var top = (box.h - imgH) / 2;
+          var centerX = box.w * (window.innerWidth <= 860 ? .5 : .53);
+          var centerY = box.h * .5;
+          var left = centerX - imgW / 2;
+          var top = centerY - imgH / 2;
           particles.forEach(function(p){
             p.tx = box.ext + left + p.nx * imgW;
             p.ty = top + p.ny * imgH;
@@ -1879,10 +1944,20 @@
 
             if(alpha <= .02) return;
             ctx.fillStyle = 'rgb(' + p.r + ',' + p.g + ',' + p.b + ')';
-            var s = p.size * (1 + boost * .8);
-            ctx.globalAlpha = alpha * .09;
-            ctx.fillRect(x - .15, y - .15, s + .3, s + .3);
-            ctx.globalAlpha = alpha * (.88 + boost * .12);
+            var accentBoost = p.kind === 'cyan' ? 1.18 : 1;
+            var s = p.size * accentBoost * (1 + boost * .8);
+            if(p.kind === 'cyan'){
+              var trail = 3 + p.drift * 5 + boost * 4;
+              ctx.globalAlpha = alpha * (.12 + boost * .08);
+              ctx.fillRect(x - trail, y + s * .34, trail, Math.max(.6, s * .38));
+              ctx.globalAlpha = alpha * .12;
+              ctx.fillRect(x - s * .5, y - s * .5, s * 2, s * 2);
+            }else{
+              ctx.globalAlpha = alpha * .07;
+              ctx.fillRect(x - .15, y - .15, s + .3, s + .3);
+            }
+            var settledAlpha = p.kind === 'cyan' ? .82 : p.kind === 'pink' ? .62 : .58;
+            ctx.globalAlpha = alpha * (settledAlpha + boost * .16);
             ctx.fillRect(x, y, s, s);
           });
           ctx.globalAlpha = 1;
@@ -1908,28 +1983,36 @@
           }
         }
 
-        media.addEventListener('pointermove', function(e){
-          var rect = canvas.getBoundingClientRect();
-          mouse.x = e.clientX - rect.left;
-          mouse.y = e.clientY - rect.top;
-          mouse.on = true;
-          var mediaRect = media.getBoundingClientRect();
-          var nx = (e.clientX - mediaRect.left) / mediaRect.width - .5;
-          var ny = (e.clientY - mediaRect.top) / mediaRect.height - .5;
-          media.classList.add('is-pointer-active');
-          media.style.setProperty('--pointer-x', ((nx + .5) * 100).toFixed(2) + '%');
-          media.style.setProperty('--pointer-y', ((ny + .5) * 100).toFixed(2) + '%');
-          media.style.setProperty('--grid-x', (nx * 7).toFixed(2) + 'px');
-          media.style.setProperty('--grid-y', (ny * 7).toFixed(2) + 'px');
-        });
-        media.addEventListener('pointerleave', function(){
+        function resetPointer(){
           mouse.on = false;
           media.classList.remove('is-pointer-active');
           media.style.setProperty('--pointer-x','50%');
           media.style.setProperty('--pointer-y','50%');
           media.style.setProperty('--grid-x','0px');
           media.style.setProperty('--grid-y','0px');
+        }
+
+        interaction.addEventListener('pointermove', function(e){
+          var interactionBounds = interactionArea.getBoundingClientRect();
+          if(!pointInsideRect(interactionBounds,e.clientX,e.clientY)){
+            resetPointer();
+            return;
+          }
+          var point = normalizePoint(interactionBounds,e.clientX,e.clientY);
+          mouse.x = box.ext + point.x * box.w;
+          mouse.y = point.y * box.h;
+          mouse.on = true;
+          var px = point.x;
+          var py = point.y;
+          var nx = px - .5;
+          var ny = py - .5;
+          media.classList.add('is-pointer-active');
+          media.style.setProperty('--pointer-x', (px * 100).toFixed(2) + '%');
+          media.style.setProperty('--pointer-y', (py * 100).toFixed(2) + '%');
+          media.style.setProperty('--grid-x', (nx * 7).toFixed(2) + 'px');
+          media.style.setProperty('--grid-y', (ny * 7).toFixed(2) + 'px');
         });
+        interaction.addEventListener('pointerleave', resetPointer);
         window.addEventListener('resize', function(){
           measure();
           layoutParticles(false);
