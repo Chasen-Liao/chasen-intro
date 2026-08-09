@@ -38,7 +38,7 @@ test('gives social visitors a direct X call to action', () => {
 test('shows the current public follower count on the X contact card', () => {
   assert.match(
     html,
-    /@chasen_liao <em data-x-followers="1540">1,540 followers · build log<\/em>/
+    /@chasen_liao <em data-x-followers="2342">2,342 followers · build log<\/em>/
   );
 });
 
