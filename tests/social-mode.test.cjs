@@ -38,8 +38,15 @@ test('gives social visitors a direct X call to action', () => {
 test('shows the current public follower count on the X contact card', () => {
   assert.match(
     html,
-    /@chasen_liao <em data-x-followers="2373">2,373 followers · build log<\/em>/
+    /@chasen_liao <em data-x-followers="3600">3\.6k followers · build log<\/em>/
   );
+});
+
+test('keeps the displayed WeChat account and copy payload in sync', () => {
+  assert.match(html, /data-copy="lcz18318288755" aria-label="复制微信号 lcz18318288755"/);
+  assert.match(html, />lcz18318288755 <em data-copy-hint>点击复制<\/em>/);
+  assert.doesNotMatch(html, /data-copy="chasen_liao"/);
+  assert.match(html, /href="https:\/\/x\.com\/chasen_liao"/);
 });
 
 test('includes daily AI coding tools in the signal station', () => {
