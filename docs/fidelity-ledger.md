@@ -45,8 +45,8 @@
 | X 定位 | AI 原住民、Vibe Coding、AI Agent 实战分享 | Hero 与 About 使用 Social 专属文案 | 通过 |
 | 首屏行动 | 优先关注 X，同时可浏览构建记录 | `关注 X` 外链与 `浏览构建记录` 锚点独立显示 | 通过 |
 | 模式切换 | Resume 内容仍可正常访问 | 浏览器点击切换后 Resume CTA 显示、Social CTA 隐藏 | 通过 |
-| X 粉丝数 | 使用用户确认的实时数字 | `data-x-followers="2373"`；显示 `2,373 followers` | 通过 |
-| 信号台内容 | 技术栈之外呈现日常 AI Coding 工具 | 顶部新增 Claude Code（CORE / DAILY）与 OpenAI Codex（ACTIVE / DAILY） | 通过 |
+| X 粉丝数 | 使用用户确认的实时数字 | `data-x-followers="3700"`；显示 `3.7k followers` | 通过 |
+| 信号台内容 | 技术栈之外呈现日常 AI Coding 工具 | 顶部呈现 Pi Agent（CORE / DAILY）、Claude Code（CORE / DAILY）与 OpenAI Codex（ACTIVE / DAILY） | 通过 |
 | 移动端 | Social 文案和 CTA 不溢出 | 390 × 844；CTA 各 154 × 54px；横向溢出为 0 | 通过 |
 
 ## GitHub 内容快照

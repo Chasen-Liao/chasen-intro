@@ -18,13 +18,13 @@ test('uses the public X positioning in the social introduction', () => {
   assert.match(html, /AI 原住民 × VIBE CODING \/ AGENT BUILDER/);
   assert.match(
     html,
-    /分享 Claude Code 使用技巧、AI 前沿动态与 Vibe Coding 实战工作流。/
+    /分享 Pi Agent、Codex、Claude Code 使用技巧、AI 前沿动态与 Vibe Coding 实战工作流。/
   );
   assert.match(
     html,
     /AI 原住民和 Vibe Coding \/ AI Agent 实战玩家/
   );
-  assert.match(html, /Claude Code、Codex 与 Agent 工作流/);
+  assert.match(html, /Pi Agent、Codex、Claude Code 与 Agent 工作流/);
 });
 
 test('gives social visitors a direct X call to action', () => {
@@ -38,7 +38,7 @@ test('gives social visitors a direct X call to action', () => {
 test('shows the current public follower count on the X contact card', () => {
   assert.match(
     html,
-    /@chasen_liao <em data-x-followers="3600">3\.6k followers · build log<\/em>/
+    /@chasen_liao <em data-x-followers="3700">3\.7k followers · build log<\/em>/
   );
 });
 
@@ -50,6 +50,10 @@ test('keeps the displayed WeChat account and copy payload in sync', () => {
 });
 
 test('includes daily AI coding tools in the signal station', () => {
+  assert.match(
+    html,
+    /<div class="skill__name">Pi Agent <em>daily<\/em><\/div>[\s\S]*?<div class="skill__level">CORE<\/div>[\s\S]*?<div class="skill__years">DAILY<\/div>/
+  );
   assert.match(
     html,
     /<div class="skill__name">Claude Code <em>daily<\/em><\/div>[\s\S]*?<div class="skill__level">CORE<\/div>[\s\S]*?<div class="skill__years">DAILY<\/div>/
