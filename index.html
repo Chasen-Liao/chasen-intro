@@ -628,14 +628,62 @@
       padding:2px 7px;border-radius:2px;white-space:nowrap;
     }
     .wrow__thumb{
-      width:150px;height:84px;overflow:hidden;border:1px solid var(--line);background:#2a2622;
+      position:relative;width:150px;height:84px;overflow:hidden;
+      border:1px solid rgba(201,192,178,.72);background:#211e1b;
+      box-shadow:inset 0 0 0 1px rgba(240,101,46,.08);
     }
     .wrow__thumb-ph{
-      width:100%;height:100%;
-      display:flex;align-items:center;justify-content:center;
-      font-family:var(--mono);font-size:9px;color:rgba(244,239,230,.4);
-      letter-spacing:.1em;background:linear-gradient(135deg,#2a2622,#3a342d);
+      position:relative;width:100%;height:100%;overflow:hidden;
+      display:flex;flex-direction:column;justify-content:space-between;
+      padding:9px 11px 8px;color:var(--paper);font-family:var(--mono);
+      background:
+        linear-gradient(135deg,rgba(240,101,46,.12),transparent 42%),
+        repeating-linear-gradient(0deg,rgba(244,239,230,.045) 0 1px,transparent 1px 4px),
+        linear-gradient(135deg,#211e1b,#39332d);
+      isolation:isolate;
     }
+    .wrow__thumb-ph::before{
+      content:"";position:absolute;inset:7px;z-index:-1;
+      border:1px solid rgba(244,239,230,.12);pointer-events:none;
+    }
+    .wrow__thumb-ph::after{
+      content:"";position:absolute;left:0;top:0;width:34%;height:2px;
+      background:var(--accent);box-shadow:0 0 10px rgba(240,101,46,.7);
+      transform-origin:left center;transition:transform .35s var(--ease);
+    }
+    .wrow__digital-kicker{
+      display:flex;align-items:center;justify-content:space-between;
+      position:relative;z-index:1;font-size:7px;line-height:1;
+      letter-spacing:.12em;color:rgba(244,239,230,.62);
+    }
+    .wrow__digital-kicker b{color:var(--accent);font-weight:600;}
+    .wrow__starline{
+      display:flex;align-items:flex-end;gap:6px;position:relative;z-index:1;
+      line-height:1;
+    }
+    .wrow__star-icon{
+      width:12px;height:12px;flex:0 0 auto;margin-bottom:3px;
+      background:var(--accent);filter:drop-shadow(0 0 4px rgba(240,101,46,.5));
+      -webkit-clip-path:polygon(50% 0%,61% 34%,98% 35%,68% 56%,79% 92%,50% 70%,21% 92%,32% 56%,2% 35%,39% 34%);
+      clip-path:polygon(50% 0%,61% 34%,98% 35%,68% 56%,79% 92%,50% 70%,21% 92%,32% 56%,2% 35%,39% 34%);
+      transition:transform .3s var(--spring),filter .3s var(--ease);
+    }
+    .wrow__star-count{
+      font-family:var(--mono);font-size:27px;font-weight:600;
+      letter-spacing:-.08em;color:var(--paper);font-variant-numeric:tabular-nums;
+      text-shadow:0 0 12px rgba(244,239,230,.2);
+    }
+    .wrow__star-unit{
+      margin-bottom:2px;font-size:8px;letter-spacing:.14em;color:var(--accent);
+    }
+    .wrow__feature{
+      position:relative;z-index:1;overflow:hidden;white-space:nowrap;
+      text-overflow:ellipsis;font-size:8px;letter-spacing:.1em;
+      color:rgba(244,239,230,.72);
+    }
+    .wrow__feature::before{content:"//";margin-right:5px;color:var(--accent);}
+    .wrow:hover .wrow__thumb-ph::after{transform:scaleX(2.8);}
+    .wrow:hover .wrow__star-icon{transform:scale(1.16) rotate(9deg);filter:drop-shadow(0 0 7px rgba(240,101,46,.72));}
     .wrow__arr{justify-self:end;color:var(--ink);transition:transform .3s var(--ease),color .3s;}
     .wrow:hover .wrow__arr{transform:translateX(5px);color:var(--accent);}
     .wrow{
@@ -1163,7 +1211,11 @@
             <span class="wrow__chip">Electron</span>
             <span class="wrow__chip">React</span>
           </div>
-          <div class="wrow__thumb"><div class="wrow__thumb-ph" data-github-stars="pi-agent-desktop">⭐ 20 · PI / DESKTOP</div></div>
+          <div class="wrow__thumb"><div class="wrow__thumb-ph" data-github-stars="pi-agent-desktop">
+            <div class="wrow__digital-kicker"><span>GITHUB // METRIC</span><b>LIVE</b></div>
+            <div class="wrow__starline"><span class="wrow__star-icon" aria-hidden="true"></span><strong class="wrow__star-count" data-github-star-count>20</strong><span class="wrow__star-unit">STARS</span></div>
+            <div class="wrow__feature">PI / DESKTOP</div>
+          </div></div>
           <div class="wrow__arr">→</div>
         </a>
 
@@ -1183,7 +1235,11 @@
             <span class="wrow__chip">Milvus</span>
             <span class="wrow__chip">FastAPI</span>
           </div>
-          <div class="wrow__thumb"><div class="wrow__thumb-ph" data-github-stars="SuperMew">⭐ 3 · RAG / MEMORY</div></div>
+          <div class="wrow__thumb"><div class="wrow__thumb-ph" data-github-stars="SuperMew">
+            <div class="wrow__digital-kicker"><span>GITHUB // METRIC</span><b>LIVE</b></div>
+            <div class="wrow__starline"><span class="wrow__star-icon" aria-hidden="true"></span><strong class="wrow__star-count" data-github-star-count>3</strong><span class="wrow__star-unit">STARS</span></div>
+            <div class="wrow__feature">RAG / MEMORY</div>
+          </div></div>
           <div class="wrow__arr">→</div>
         </a>
 
@@ -1202,7 +1258,11 @@
             <span class="wrow__chip">Claude Plugin</span>
             <span class="wrow__chip">HTML</span>
           </div>
-          <div class="wrow__thumb"><div class="wrow__thumb-ph" data-github-stars="resume-skills">⭐ 10 · RESUME / JD</div></div>
+          <div class="wrow__thumb"><div class="wrow__thumb-ph" data-github-stars="resume-skills">
+            <div class="wrow__digital-kicker"><span>GITHUB // METRIC</span><b>LIVE</b></div>
+            <div class="wrow__starline"><span class="wrow__star-icon" aria-hidden="true"></span><strong class="wrow__star-count" data-github-star-count>10</strong><span class="wrow__star-unit">STARS</span></div>
+            <div class="wrow__feature">RESUME / JD</div>
+          </div></div>
           <div class="wrow__arr">→</div>
         </a>
 
@@ -1221,7 +1281,11 @@
             <span class="wrow__chip">Markdown</span>
             <span class="wrow__chip">Docs</span>
           </div>
-          <div class="wrow__thumb"><div class="wrow__thumb-ph" data-github-stars="Everything-claude-code-Doc">⭐ 12 · ECC / GUIDE</div></div>
+          <div class="wrow__thumb"><div class="wrow__thumb-ph" data-github-stars="Everything-claude-code-Doc">
+            <div class="wrow__digital-kicker"><span>GITHUB // METRIC</span><b>LIVE</b></div>
+            <div class="wrow__starline"><span class="wrow__star-icon" aria-hidden="true"></span><strong class="wrow__star-count" data-github-star-count>12</strong><span class="wrow__star-unit">STARS</span></div>
+            <div class="wrow__feature">ECC / GUIDE</div>
+          </div></div>
           <div class="wrow__arr">→</div>
         </a>
 
@@ -1241,7 +1305,11 @@
             <span class="wrow__chip">SKILL.md</span>
             <span class="wrow__chip">npx skills</span>
           </div>
-          <div class="wrow__thumb"><div class="wrow__thumb-ph" data-github-stars="Chasen-Skills">⭐ 29 · SKILLS / TOOLING</div></div>
+          <div class="wrow__thumb"><div class="wrow__thumb-ph" data-github-stars="Chasen-Skills">
+            <div class="wrow__digital-kicker"><span>GITHUB // METRIC</span><b>LIVE</b></div>
+            <div class="wrow__starline"><span class="wrow__star-icon" aria-hidden="true"></span><strong class="wrow__star-count" data-github-star-count>29</strong><span class="wrow__star-unit">STARS</span></div>
+            <div class="wrow__feature">SKILLS / TOOLING</div>
+          </div></div>
           <div class="wrow__arr">→</div>
         </a>
       </div>
@@ -1647,7 +1715,10 @@
         });
         document.querySelectorAll('[data-github-stars]').forEach(function(el){
           var repo = reposByName[el.getAttribute('data-github-stars')];
-          if(repo) el.textContent = el.textContent.replace(/^⭐\s*\d+/, '⭐ ' + repo.stargazers_count);
+          if(repo){
+            var count = el.querySelector('[data-github-star-count]');
+            if(count) count.textContent = repo.stargazers_count;
+          }
         });
       }).catch(function(){
         /* Keep the verified static snapshot. */

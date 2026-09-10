@@ -16,11 +16,11 @@ test('uses the current GitHub profile totals everywhere', () => {
 });
 
 test('uses the current stars for every selected GitHub project', () => {
-  assert.match(html, /⭐ 20 · PI \/ DESKTOP/);
-  assert.match(html, /⭐ 3 · RAG \/ MEMORY/);
-  assert.match(html, /⭐ 10 · RESUME \/ JD/);
-  assert.match(html, /⭐ 12 · ECC \/ GUIDE/);
-  assert.match(html, /⭐ 29 · SKILLS \/ TOOLING/);
+  assert.match(html, /data-github-stars="pi-agent-desktop"[\s\S]*data-github-star-count>20<\/strong>[\s\S]*PI \/ DESKTOP/);
+  assert.match(html, /data-github-stars="SuperMew"[\s\S]*data-github-star-count>3<\/strong>[\s\S]*RAG \/ MEMORY/);
+  assert.match(html, /data-github-stars="resume-skills"[\s\S]*data-github-star-count>10<\/strong>[\s\S]*RESUME \/ JD/);
+  assert.match(html, /data-github-stars="Everything-claude-code-Doc"[\s\S]*data-github-star-count>12<\/strong>[\s\S]*ECC \/ GUIDE/);
+  assert.match(html, /data-github-stars="Chasen-Skills"[\s\S]*data-github-star-count>29<\/strong>[\s\S]*SKILLS \/ TOOLING/);
   assert.doesNotMatch(html, /⭐ 19 · PI \/ DESKTOP|⭐ 3 · RESUME \/ JD/);
 });
 
@@ -57,6 +57,7 @@ test('marks every GitHub metric as a live-updatable field', () => {
 });
 
 test('refreshes GitHub metrics from two uncached public API requests', () => {
+  assert.match(html, /var count = el\.querySelector\('\[data-github-star-count\]'\);[\s\S]*?count\.textContent = repo\.stargazers_count;/);
   assert.match(
     html,
     /fetch\('https:\/\/api\.github\.com\/users\/Chasen-Liao',\{cache:'no-store'/
