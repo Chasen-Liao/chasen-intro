@@ -20,6 +20,7 @@ test('uses the current stars for every selected GitHub project', () => {
   assert.match(html, /⭐ 3 · RAG \/ MEMORY/);
   assert.match(html, /⭐ 10 · RESUME \/ JD/);
   assert.match(html, /⭐ 12 · ECC \/ GUIDE/);
+  assert.match(html, /⭐ 29 · SKILLS \/ TOOLING/);
   assert.doesNotMatch(html, /⭐ 19 · PI \/ DESKTOP|⭐ 3 · RESUME \/ JD/);
 });
 
@@ -28,6 +29,16 @@ test('sends the complete portfolio link to the GitHub profile', () => {
     html,
     /<a class="work__all" href="https:\/\/github\.com\/Chasen-Liao" target="_blank" rel="noopener noreferrer">完整作品集/
   );
+});
+
+test('includes Chasen-Skills in the selected portfolio', () => {
+  assert.match(
+    html,
+    /<a class="wrow" data-cats="全部 工具链 文档 Claude Code Agent 实验" href="https:\/\/github\.com\/Chasen-Liao\/Chasen-Skills"/
+  );
+  assert.match(html, /Chasen-Skills — 个人 Agent Skills 集合/);
+  assert.match(html, /为 Pi、Antigravity、Claude Code 打造的个人 Agent Skills 集合/);
+  assert.match(html, /SELECTED PROJECTS · 05/);
 });
 
 test('marks every GitHub metric as a live-updatable field', () => {
@@ -39,6 +50,7 @@ test('marks every GitHub metric as a live-updatable field', () => {
     'SuperMew',
     'resume-skills',
     'Everything-claude-code-Doc',
+    'Chasen-Skills',
   ]) {
     assert.match(html, new RegExp(`data-github-stars="${repo}"`));
   }

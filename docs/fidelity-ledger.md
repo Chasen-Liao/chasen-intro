@@ -61,6 +61,7 @@
 | SuperMew | 3 Stars |
 | resume-skills | 10 Stars |
 | Everything Claude Code | 12 Stars |
+| Chasen-Skills | 29 Stars |
 
 站内蓝图指标、项目卡片、底部联系栏和完整作品集链接均已同步。每次页面加载会以 `cache: no-store` 向 GitHub 官方 API 发起 2 个请求（用户数据 + 仓库列表）并更新全部字段；请求失败或触发限流时保留本表记录的静态快照。浏览器实测回填成功，无横向溢出、无控制台错误。
 
