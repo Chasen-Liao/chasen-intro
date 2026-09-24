@@ -24,7 +24,7 @@
     "sameAs": [
       "https://github.com/Chasen-Liao",
       "https://x.com/chasen_liao",
-      "https://chasenclog.vercel.app"
+      "https://chasen-clog.cc.cd"
     ],
     "alumniOf": {
       "@type": "CollegeOrUniversity",
@@ -887,8 +887,9 @@
     @media (max-width:600px){
       .nav{padding:0 12px;}
       .nav__brand{font-size:18px;}
-      .nav__links{flex:1;min-width:0;justify-content:flex-end;gap:3px;}
-      .nav__links a{min-width:32px;font-size:9px;letter-spacing:.04em;}
+      .nav__links{flex:1;min-width:0;justify-content:flex-end;gap:3px;overflow-x:auto;scrollbar-width:none;}
+      .nav__links::-webkit-scrollbar{display:none;}
+      .nav__links a{min-width:0;font-size:9px;letter-spacing:.02em;padding:0 1px;}
       .mode-capsule{padding:0 2px;margin-left:2px;font-size:8px;flex:none;}
       .mode-capsule__opt{padding:0 4px;height:20px;}
       .hero{
@@ -948,6 +949,8 @@
       <a href="#about" data-nav="about">简历</a>
       <span class="sep">/</span>
       <a href="#work" data-nav="work">作品</a>
+      <span class="sep">/</span>
+      <a href="works.html">全部</a>
       <span class="sep">/</span>
       <a href="#contact" data-nav="contact">联系</a>
       <span class="nav__stat"><i></i>开放机会</span>
@@ -1195,7 +1198,7 @@
       </div>
 
       <div class="work__list" data-reveal>
-        <a class="wrow" data-cats="全部 桌面客户端 前端 Claude Code" href="https://github.com/Chasen-Liao/pi-agent-desktop" target="_blank" rel="noopener noreferrer" aria-label="打开 Pi Agent Desktop GitHub 项目，新窗口" tabindex="0">
+        <a class="wrow" data-cats="全部 桌面客户端 前端 Claude Code" href="https://chasen-liao.github.io/pi-agent-desktop/" target="_blank" rel="noopener noreferrer" aria-label="打开 Pi Agent Desktop 站点，新窗口" tabindex="0">
           <div class="wrow__idx">01</div>
           <div class="wrow__body">
             <div class="wrow__meta-row">
@@ -1314,7 +1317,7 @@
         </a>
       </div>
 
-      <a class="work__all" href="https://github.com/Chasen-Liao" target="_blank" rel="noopener noreferrer">完整作品集 <span class="arr">→</span></a>
+      <a class="work__all" href="works.html">完整作品集 <span class="arr">→</span></a>
     </section>
 
     <!-- ═══════════ 04 CONTACT ═══════════ -->
@@ -1407,13 +1410,13 @@
           </div>
           <span class="cbar__arr">→</span>
         </a>
-        <a class="cbar__item" href="https://chasenclog.vercel.app/" target="_blank" rel="noopener noreferrer">
+        <a class="cbar__item" href="https://chasen-clog.cc.cd/" target="_blank" rel="noopener noreferrer">
           <div class="cbar__logo">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
           </div>
           <div class="cbar__info">
             <div class="cbar__lbl">BLOG</div>
-            <div class="cbar__val" style="margin-top:8px;">chasenclog.vercel.app <em>技术随笔</em></div>
+            <div class="cbar__val" style="margin-top:8px;">chasen-clog.cc.cd <em>技术随笔</em></div>
           </div>
           <span class="cbar__arr">→</span>
         </a>

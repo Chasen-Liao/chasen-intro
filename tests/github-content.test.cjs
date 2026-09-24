@@ -24,11 +24,12 @@ test('uses the current stars for every selected GitHub project', () => {
   assert.doesNotMatch(html, /⭐ 19 · PI \/ DESKTOP|⭐ 3 · RESUME \/ JD/);
 });
 
-test('sends the complete portfolio link to the GitHub profile', () => {
-  assert.match(
-    html,
-    /<a class="work__all" href="https:\/\/github\.com\/Chasen-Liao" target="_blank" rel="noopener noreferrer">完整作品集/
-  );
+test('sends the complete portfolio link to the works index', () => {
+  assert.match(html, /<a class="work__all" href="works\.html">完整作品集/);
+  assert.match(html, /<a href="works\.html">全部<\/a>/);
+  assert.doesNotMatch(html, /chasenclog\.vercel\.app/);
+  assert.match(html, /https:\/\/chasen-clog\.cc\.cd/);
+  assert.match(html, /href="https:\/\/chasen-liao\.github\.io\/pi-agent-desktop\/"/);
 });
 
 test('includes Chasen-Skills in the selected portfolio', () => {
