@@ -1,173 +1,139 @@
+// The portrait is now a 3D flashcard; this replaces the retired particle contract.
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
 const vm = require('node:vm');
 
-const root = path.resolve(__dirname, '..');
-const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
+const html = fs.readFileSync(path.resolve(__dirname, '..', 'index.html'), 'utf8');
 
 function readFunction(name) {
-  const marker = `function ${name}(`;
-  const start = html.indexOf(marker);
-  assert.notEqual(start, -1, `${name} should exist in index.html`);
-
+  const start = html.indexOf(`function ${name}(`);
+  assert.notEqual(start, -1, `${name} should exist`);
   const bodyStart = html.indexOf('{', start);
   let depth = 0;
   for (let index = bodyStart; index < html.length; index += 1) {
     if (html[index] === '{') depth += 1;
     if (html[index] === '}') depth -= 1;
-    if (depth === 0) {
-      return vm.runInNewContext(`(${html.slice(start, index + 1)})`);
-    }
+    if (depth === 0) return vm.runInNewContext(`(${html.slice(start, index + 1)})`);
   }
-
-  assert.fail(`${name} should have a complete function body`);
+  assert.fail(`${name} should have a complete body`);
 }
 
-function readCssRule(selector) {
-  const marker = `${selector}{`;
-  const start = html.indexOf(marker);
-  assert.notEqual(start, -1, `${selector} should exist in index.html`);
-  const end = html.indexOf('}', start);
-  assert.notEqual(end, -1, `${selector} should have a complete CSS rule`);
-  return html.slice(start, end + 1);
+const getTarget = readFunction('getCardTarget');
+const stepSpring = readFunction('stepCardSpring');
+const rect = { left: 100, top: 50, width: 300, height: 400 };
+
+function simulate(destination, hz) {
+  let position = 0;
+  let velocity = 0;
+  for (let i = 0; i < hz; i += 1) {
+    const next = stepSpring(position, velocity, destination, 1 / hz);
+    position = next.position;
+    velocity = next.velocity;
+  }
+  return { position, velocity };
 }
 
-test('uses the approved avatar for the portrait and social preview', () => {
-  assert.match(
-    html,
-    /<img class="portrait__img" src="assets\/chasen-avatar-smile\.png"/
-  );
-  assert.match(
-    html,
-    /og:image" content="https:\/\/chasen-intro\.vercel\.app\/assets\/chasen-avatar-smile\.png"/
-  );
+test('keeps the real avatar and social preview source unchanged', () => {
+  assert.match(html, /<img class="portrait__img" src="assets\/chasen-avatar-smile\.png"/);
+  assert.match(html, /og:image" content="https:\/\/chasen-intro\.vercel\.app\/assets\/chasen-avatar-smile\.png"/);
 });
 
-test('preserves cyan and pink source colors in portrait particles', () => {
-  const colorFor = readFunction('colorFor');
-  assert.deepEqual(
-    Array.from(colorFor(135, 225, 240)),
-    [135, 225, 240]
-  );
-  assert.deepEqual(
-    Array.from(colorFor(245, 153, 173)),
-    [245, 153, 173]
-  );
+test('replaces the portrait canvas with a non-interactive flashcard', () => {
+  assert.match(html, /<div class="portrait__card" data-portrait-card>/);
+  assert.doesNotMatch(html, /initPortraitParticles|portrait__particles/);
+  const cardMarkup = html.slice(html.indexOf('<div class="portrait"'), html.indexOf('<!-- ═══════════ 02 ABOUT'));
+  assert.doesNotMatch(cardMarkup, /tabindex|<button|role="button"/);
+  assert.match(cardMarkup, /portrait__foil" aria-hidden="true"/);
+  assert.match(cardMarkup, /portrait__glare" aria-hidden="true"/);
 });
 
-test('classifies avatar accent particles without changing the site palette', () => {
-  const particleKind = readFunction('particleKind');
-  assert.equal(particleKind(135, 225, 240), 'cyan');
-  assert.equal(particleKind(245, 153, 173), 'pink');
-  assert.equal(particleKind(181, 141, 111), 'base');
+test('maps card center to a flat target', () => {
+  const target = getTarget(rect, 250, 250);
+  assert.ok(Math.abs(target.x) === 0);
+  assert.equal(target.y, 0);
 });
 
-test('filters white paper pixels but retains bright cyan circuitry', () => {
-  const isBackground = readFunction('isBackground');
-  assert.equal(isBackground(250, 250, 250, 255), true);
-  assert.equal(isBackground(135, 225, 240, 255), false);
+test('maps corners to restrained rotation limits', () => {
+  const topLeft = getTarget(rect, 100, 50);
+  const bottomRight = getTarget(rect, 400, 450);
+  assert.equal(topLeft.x, 9);
+  assert.equal(topLeft.y, -12);
+  assert.equal(bottomRight.x, -9);
+  assert.equal(bottomRight.y, 12);
 });
 
-test('settled portrait is clear enough to carry the identity', () => {
-  const match = html.match(
-    /\.portrait\.is-base-visible \.portrait__img\{opacity:([.\d]+)/
-  );
-  assert.ok(match, 'settled portrait opacity should be declared');
-  assert.ok(Number(match[1]) >= 0.68, 'settled portrait opacity should be at least 0.68');
+test('clamps out-of-bounds and degenerate geometry to finite angles', () => {
+  for (const bounds of [rect, { left: 0, top: 0, width: 0, height: 0 }]) {
+    const target = getTarget(bounds, -10000, 10000);
+    assert.ok(Number.isFinite(target.x) && Number.isFinite(target.y));
+    assert.ok(Math.abs(target.x) <= 9 && Math.abs(target.y) <= 12);
+  }
 });
 
-test('recognizes points inside an interaction rectangle', () => {
-  const pointInsideRect = readFunction('pointInsideRect');
-  const rect = {left: 120, top: 40, right: 920, bottom: 520};
-
-  assert.equal(pointInsideRect(rect, 400, 260), true);
-  assert.equal(pointInsideRect(rect, 119, 260), false);
-  assert.equal(pointInsideRect(rect, 400, 521), false);
+test('critical damping approaches the target without overshooting from rest', () => {
+  let position = 0;
+  let velocity = 0;
+  for (let i = 0; i < 120; i += 1) {
+    const next = stepSpring(position, velocity, 12, 1 / 60);
+    assert.ok(next.position >= position && next.position <= 12);
+    position = next.position;
+    velocity = next.velocity;
+  }
+  assert.ok(Math.abs(position - 12) < 0.001);
+  assert.ok(Math.abs(velocity) < 0.001);
 });
 
-test('maps the full hero right column into portrait interaction coordinates', () => {
-  const normalizePoint = readFunction('normalizePoint');
-  const rect = {left: 800, top: 100, width: 1200, height: 900};
-  const topLeft = normalizePoint(rect, 800, 100);
-  const center = normalizePoint(rect, 1400, 550);
-  const bottomRight = normalizePoint(rect, 2000, 1000);
-
-  assert.equal(topLeft.x, 0);
-  assert.equal(topLeft.y, 0);
-  assert.equal(center.x, 0.5);
-  assert.equal(center.y, 0.5);
-  assert.equal(bottomRight.x, 1);
-  assert.equal(bottomRight.y, 1);
+test('spring follows the same trajectory at different refresh rates', () => {
+  const low = simulate(12, 30);
+  for (const hz of [60, 120, 144]) {
+    const high = simulate(12, hz);
+    assert.ok(Math.abs(low.position - high.position) < 1e-10);
+    assert.ok(Math.abs(low.velocity - high.velocity) < 1e-10);
+  }
 });
 
-test('routes pointer movement through the hero using the full right column bounds', () => {
-  assert.match(html, /var interactionArea = portrait\.closest\('\.hero__right'\) \|\| portrait;/);
-  assert.match(html, /var interaction = portrait\.closest\('\.hero'\) \|\| interactionArea;/);
-  assert.match(html, /interaction\.addEventListener\('pointermove'/);
-  assert.doesNotMatch(html, /media\.addEventListener\('pointermove'/);
-  assert.doesNotMatch(html, /pointInsideRect\(canvasRect/);
+test('reversing a target retains presentation position and momentum', () => {
+  const first = stepSpring(0, 0, 12, 0.1);
+  const reversed = stepSpring(first.position, first.velocity, -12, 1 / 240);
+  assert.ok(first.velocity > 0);
+  assert.ok(reversed.velocity > 0, 'momentum must not hard-cut on reversal');
+  assert.ok(Math.abs(reversed.position - first.position) < 1);
+  let state = reversed;
+  for (let i = 0; i < 120; i += 1) state = stepSpring(state.position, state.velocity, -12, 1 / 60);
+  assert.ok(Math.abs(state.position + 12) < 0.001);
 });
 
-test('fills the desktop hero right column with the visible portrait panel', () => {
-  const heroRight = readCssRule('.hero__right');
-  const portrait = readCssRule('.portrait');
-  const portraitImage = readCssRule('.portrait__img');
-
-  assert.match(heroRight, /min-height:100svh/);
-  assert.match(heroRight, /padding:calc\(var\(--nav-h\) \+ 28px\) 0 8vh/);
-  assert.match(portrait, /width:100%/);
-  assert.match(portrait, /min-height:calc\(100svh - var\(--nav-h\) - 28px - 8vh\)/);
-  assert.match(portrait, /aspect-ratio:auto/);
-  assert.match(portrait, /margin:0/);
-  assert.match(portraitImage, /left:53%;top:50%/);
-  assert.match(portraitImage, /width:min\(82%,720px\)/);
+test('uses stable scene coordinates rather than transformed card bounds', () => {
+  assert.match(html, /var bounds = scene\.getBoundingClientRect\(\);/);
+  assert.match(html, /left:bounds\.left \+ card\.offsetLeft/);
+  assert.match(html, /top:bounds\.top \+ card\.offsetTop/);
+  assert.doesNotMatch(html, /card\.getBoundingClientRect\(\)/);
 });
 
-test('keeps the compact portrait card on tablet and mobile layouts', () => {
-  assert.match(
-    html,
-    /@media \(max-width:860px\)[\s\S]*?\.hero__right\{order:-1;padding:0;min-height:0;\}[\s\S]*?\.portrait\{width:min\(76vw,420px\);min-height:0;aspect-ratio:945\/638;margin:0;\}[\s\S]*?\.portrait__img\{width:58%;left:50%;top:50%;\}/
-  );
+test('stops animation on settling, leaving view, blur and motion preference changes', () => {
+  assert.match(html, /if\(isSettled\(\)\)\{[\s\S]*?lastTime = 0;[\s\S]*?return;/);
+  assert.match(html, /if\(frameId\) cancelAnimationFrame\(frameId\);/);
+  assert.match(html, /if\(!inView\) reset\(true\);/);
+  assert.match(html, /window\.addEventListener\('blur', function\(\)\{ reset\(true\); \}\);/);
+  assert.match(html, /motion\.addEventListener\('change', function\(\)\{ reset\(true\); \}\);/);
+  assert.match(html, /event\.pointerType !== 'mouse' \|\| !canMove\(\)/);
 });
 
-test('matches particle geometry to the expanded desktop portrait image', () => {
-  assert.match(
-    html,
-    /var imgRatio = window\.innerWidth < 600 \? \.68 : window\.innerWidth <= 860 \? \.58 : \.82;/
-  );
-  assert.match(
-    html,
-    /var imgMax = window\.innerWidth <= 860 \? 440 : 720;/
-  );
-  assert.match(
-    html,
-    /var centerX = box\.w \* \(window\.innerWidth <= 860 \? \.5 : \.53\);/
-  );
-  assert.match(
-    html,
-    /var centerY = box\.h \* \.5;/
-  );
+test('keeps touch and reduced-motion cards flat and provides an image-error fallback', () => {
+  assert.match(html, /@media \(prefers-reduced-motion:reduce\), \(hover:none\), \(pointer:coarse\)\{\s*\.portrait__card\{transform:none !important;\}/);
+  assert.match(html, /img\.addEventListener\('error', updateImageState\);/);
+  assert.match(html, /portrait\.classList\.toggle\('is-image-unavailable', !img\.naturalWidth\);/);
+  assert.match(html, /\.portrait\.is-image-unavailable \.portrait__img\{display:none;\}/);
+  assert.match(html, /\.portrait\.is-image-unavailable \.portrait__monogram\{display:flex;\}/);
 });
 
-test('matches the approved 1665 by 944 hero composition', () => {
+test('retains the approved editorial hero layout outside the portrait', () => {
   assert.match(html, /--nav-h:100px;/);
-  assert.match(
-    html,
-    /\.hero\{[\s\S]*?padding:0 var\(--pad-x\) 0 calc\(var\(--rail-x\) \+ 82px\);[\s\S]*?grid-template-columns:minmax\(0,40\.6%\) minmax\(0,59\.4%\);/
-  );
-  assert.match(html, /\.hero__left\{[\s\S]*?padding:calc\(var\(--nav-h\) \+ 9vh\) 0 6vh;/);
-  assert.match(html, /\.hero__wordmark\{[\s\S]*?font-size:clamp\(120px,14\.6vw,280px\);/);
-  assert.match(html, /\.hero__kicker\{[\s\S]*?margin-bottom:40px;/);
-  assert.match(html, /\.hero__lower\{margin-top:60px;margin-left:0;\}/);
-  assert.match(html, /\.hero__slogan\{[\s\S]*?max-width:520px;[\s\S]*?margin-bottom:46px;/);
-  assert.match(html, /\.hero__cta\{[\s\S]*?width:min\(100%,480px\);/);
+  assert.match(html, /grid-template-columns:minmax\(0,40\.6%\) minmax\(0,59\.4%\);/);
+  assert.match(html, /font-size:clamp\(120px,14\.6vw,280px\);/);
   assert.match(html, /\.hero__cta \.btn\{[\s\S]*?height:72px;/);
-  assert.match(
-    html,
-    /\.hero__right\{[\s\S]*?padding:calc\(var\(--nav-h\) \+ 28px\) 0 8vh;/
-  );
-  assert.match(html, /\.portrait\{[\s\S]*?width:100%;[\s\S]*?margin:0;/);
-  assert.match(html, /\.portrait__img\{[\s\S]*?left:53%;top:50%;/);
+  assert.match(html, /\.portrait\{width:min\(76vw,395\.16px\);min-height:0;aspect-ratio:3\/4;margin:0;\}/);
+  assert.match(html, /\.portrait\{width:min\(100%,326\.34px\);overflow:visible;\}/);
 });
