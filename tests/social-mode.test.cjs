@@ -15,16 +15,16 @@ test('opens the site in social mode by default', () => {
 });
 
 test('uses the public X positioning in the social introduction', () => {
-  assert.match(html, /AI 原住民 × VIBE CODING \/ AGENT BUILDER/);
+  assert.match(html, /20 岁大四实习生 × AI 原住民/);
   assert.match(
     html,
-    /分享 Pi Agent、Codex、Claude Code 使用技巧、AI 前沿动态与 Vibe Coding 实战工作流。/
+    /最近在用 Pi 串联 Agent 开发的一切，也在不断尝试 AI 产品经理 💪/
   );
   assert.match(
     html,
-    /AI 原住民和 Vibe Coding \/ AI Agent 实战玩家/
+    /我是 Chasen，20 岁，大四实习生，AI 原住民/
   );
-  assert.match(html, /Pi Agent、Codex、Claude Code 与 Agent 工作流/);
+  assert.match(html, /在 X 上主要写三类东西：Pi 和 Agent 工具的实测与冷知识/);
 });
 
 test('gives social visitors a direct X call to action', () => {
@@ -38,7 +38,7 @@ test('gives social visitors a direct X call to action', () => {
 test('shows the current public follower count on the X contact card', () => {
   assert.match(
     html,
-    /@chasen_liao <em data-x-followers="3900">3\.9k followers · build log<\/em>/
+    /@chasen_liao <em data-x-followers="5592">5\.5k followers · build log<\/em>/
   );
 });
 

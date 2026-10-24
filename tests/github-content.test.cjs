@@ -6,21 +6,22 @@ const path = require('node:path');
 const html = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
 
 test('uses the current GitHub profile totals everywhere', () => {
-  assert.match(html, />52 REPOS · ⌀</);
-  assert.match(html, />88 FOLLOWERS</);
+  assert.match(html, />70 REPOS · ⌀</);
+  assert.match(html, />125 FOLLOWERS</);
   assert.match(
     html,
-    /@Chasen-Liao <em data-github-profile-label>52 repos · 88 followers<\/em>/
+    /@Chasen-Liao <em data-github-profile-label>70 repos · 125 followers<\/em>/
   );
   assert.doesNotMatch(html, /51 REPOS|51 repos|87 FOLLOWERS|87 followers/);
+  assert.doesNotMatch(html, /52 REPOS|52 repos|88 FOLLOWERS|88 followers/);
 });
 
 test('uses the current stars for every selected GitHub project', () => {
-  assert.match(html, /data-github-stars="pi-agent-desktop"[\s\S]*data-github-star-count>20<\/strong>[\s\S]*PI \/ DESKTOP/);
+  assert.match(html, /data-github-stars="pi-agent-desktop"[\s\S]*data-github-star-count>327<\/strong>[\s\S]*PI \/ DESKTOP/);
   assert.match(html, /data-github-stars="SuperMew"[\s\S]*data-github-star-count>3<\/strong>[\s\S]*RAG \/ MEMORY/);
-  assert.match(html, /data-github-stars="resume-skills"[\s\S]*data-github-star-count>10<\/strong>[\s\S]*RESUME \/ JD/);
-  assert.match(html, /data-github-stars="Everything-claude-code-Doc"[\s\S]*data-github-star-count>12<\/strong>[\s\S]*ECC \/ GUIDE/);
-  assert.match(html, /data-github-stars="Chasen-Skills"[\s\S]*data-github-star-count>29<\/strong>[\s\S]*SKILLS \/ TOOLING/);
+  assert.match(html, /data-github-stars="resume-skills"[\s\S]*data-github-star-count>38<\/strong>[\s\S]*RESUME \/ JD/);
+  assert.match(html, /data-github-stars="Everything-claude-code-Doc"[\s\S]*data-github-star-count>15<\/strong>[\s\S]*ECC \/ GUIDE/);
+  assert.match(html, /data-github-stars="Chasen-Skills"[\s\S]*data-github-star-count>33<\/strong>[\s\S]*SKILLS \/ TOOLING/);
   assert.doesNotMatch(html, /⭐ 19 · PI \/ DESKTOP|⭐ 3 · RESUME \/ JD/);
 });
 
@@ -35,7 +36,7 @@ test('sends the complete portfolio link to the works index', () => {
 test('includes Chasen-Skills in the selected portfolio', () => {
   assert.match(
     html,
-    /<a class="wrow" data-cats="全部 工具链 文档 Claude Code Agent 实验" href="https:\/\/github\.com\/Chasen-Liao\/Chasen-Skills"/
+    /<a class="wrow" data-cats="全部 工具链 文档 Claude Code Agent 实验 Pi 实测" href="https:\/\/github\.com\/Chasen-Liao\/Chasen-Skills"/
   );
   assert.match(html, /Chasen-Skills — 个人 Agent Skills 集合/);
   assert.match(html, /为 Pi、Antigravity、Claude Code 打造的个人 Agent Skills 集合/);
