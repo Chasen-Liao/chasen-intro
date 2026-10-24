@@ -1095,9 +1095,105 @@
     }
   </style>
 
-  <noscript><style>[data-reveal]{opacity:1 !important;transform:none !important;}</style></noscript>
+  <!-- ═══════════ 开场动画（Remotion 渲染视频，播放一次）═══════════ -->
+  <style>
+    .intro{
+      position:fixed;top:0;left:0;width:100vw;height:100vh;height:100dvh;z-index:120;
+      display:flex;align-items:center;justify-content:center;
+      background:var(--paper);
+      opacity:1;
+      transition:opacity .45s var(--ease);
+      animation:intro-failsafe .4s var(--ease) 7s forwards;
+    }
+    .intro.is-done{opacity:0;pointer-events:none;}
+    .intro__video{
+      width:100%;height:100%;object-fit:cover;
+      opacity:0;transition:opacity .25s var(--ease);
+      pointer-events:none;
+    }
+    .intro__video.is-ready{opacity:1;}
+    html.intro-lock{overflow:hidden;scrollbar-gutter:stable;}
+    @keyframes intro-failsafe{to{opacity:0;visibility:hidden;}}
+    @media (prefers-reduced-motion:reduce){
+      .intro{display:none;}
+    }
+  </style>
+
+  <noscript><style>[data-reveal]{opacity:1 !important;transform:none !important;}.intro{display:none !important;}</style></noscript>
 </head>
 <body data-mode="social">
+
+  <div class="intro" id="intro" aria-hidden="true">
+    <video class="intro__video" id="intro-video" muted playsinline preload="auto" disablepictureinpicture></video>
+  </div>
+
+  <!-- 开场动画：首次进入播放一次，结束或点击后淡出（尽早设置 src 以缩短空白等待） -->
+  <script>
+    (function initIntro(){
+      var intro = document.getElementById('intro');
+      var video = document.getElementById('intro-video');
+      if(!intro || !video) return;
+
+      var root = document.documentElement;
+      var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      var seen = false;
+      try{ seen = sessionStorage.getItem('chasen:intro-seen') === '1'; }catch(e){}
+
+      if(reduced || seen){
+        if(intro.parentNode) intro.parentNode.removeChild(intro);
+        return;
+      }
+      try{ sessionStorage.setItem('chasen:intro-seen', '1'); }catch(e){}
+
+      var finished = false;
+      var removed = false;
+      root.classList.add('intro-lock');
+
+      // 覆盖滚动条预留的 gutter，让开场真正铺满窗口
+      function sizeIntro(){
+        intro.style.width = window.innerWidth + 'px';
+        intro.style.height = window.innerHeight + 'px';
+      }
+      sizeIntro();
+      window.addEventListener('resize', sizeIntro);
+
+      function finish(){
+        if(finished) return;
+        finished = true;
+        intro.classList.add('is-done');
+        root.classList.remove('intro-lock');
+        window.removeEventListener('resize', sizeIntro);
+        setTimeout(function(){
+          if(removed) return;
+          removed = true;
+          if(intro.parentNode) intro.parentNode.removeChild(intro);
+        }, 500);
+      }
+
+      video.muted = true;
+      video.addEventListener('loadeddata', function(){
+        video.classList.add('is-ready');
+      });
+      video.addEventListener('playing', function(){
+        video.classList.add('is-ready');
+      });
+      video.addEventListener('ended', finish);
+      video.addEventListener('error', finish);
+
+      var portrait = window.matchMedia('(orientation: portrait)').matches;
+      video.src = portrait ? 'assets/intro/intro-portrait.mp4' : 'assets/intro/intro-wide.mp4';
+      video.load();
+
+      var played = video.play();
+      if(played && played.catch) played.catch(finish);
+
+      intro.addEventListener('click', finish);
+      window.addEventListener('keydown', function(e){
+        if(e.key === 'Escape') finish();
+      });
+      setTimeout(finish, 9000);
+    })();
+  </script>
 
   <!-- 左脊柱 + 四角准星 -->
   <div class="rail" data-scroll-progress><span class="rail__progress"></span><i></i><i></i><i></i></div>
