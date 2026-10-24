@@ -135,5 +135,5 @@ test('retains the approved editorial hero layout outside the portrait', () => {
   assert.match(html, /font-size:clamp\(120px,14\.6vw,280px\);/);
   assert.match(html, /\.hero__cta \.btn\{[\s\S]*?height:72px;/);
   assert.match(html, /\.portrait\{width:min\(76vw,395\.16px\);min-height:0;aspect-ratio:3\/4;margin:0;\}/);
-  assert.match(html, /\.portrait\{width:min\(100%,326\.34px\);overflow:visible;\}/);
+  assert.match(html, /\.portrait\{width:min\(100%,292px\);overflow:visible;\}/);
 });
